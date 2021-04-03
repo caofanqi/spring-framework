@@ -120,6 +120,7 @@ public class ConstructorArgumentValues {
 	 * @param newValue the argument value in the form of a ValueHolder
 	 */
 	private void addOrMergeIndexedArgumentValue(Integer key, ValueHolder newValue) {
+		//从map中获取
 		ValueHolder currentValue = this.indexedArgumentValues.get(key);
 		if (currentValue != null && newValue.getValue() instanceof Mergeable) {
 			Mergeable mergeable = (Mergeable) newValue.getValue();

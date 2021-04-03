@@ -160,10 +160,18 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 	/** Map from dependency type to corresponding autowired value. */
 	private final Map<Class<?>, Object> resolvableDependencies = new ConcurrentHashMap<>(16);
 
-	/** Map of bean definition objects, keyed by bean name. */
+	/**
+	 *  beanDefinition注册表，是一个ConcurrentHashMap。
+	 *
+	 * Map of bean definition objects, keyed by bean name.
+	 */
 	private final Map<String, BeanDefinition> beanDefinitionMap = new ConcurrentHashMap<>(256);
 
-	/** Map from bean name to merged BeanDefinitionHolder. */
+	/**
+	 * beanName与合并的BeanDefinitionHolder映射
+	 *
+	 * Map from bean name to merged BeanDefinitionHolder.
+	 */
 	private final Map<String, BeanDefinitionHolder> mergedBeanDefinitionHolders = new ConcurrentHashMap<>(256);
 
 	/** Map of singleton and non-singleton bean names, keyed by dependency type. */
@@ -172,19 +180,34 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 	/** Map of singleton-only bean names, keyed by dependency type. */
 	private final Map<Class<?>, String[]> singletonBeanNamesByType = new ConcurrentHashMap<>(64);
 
-	/** List of bean definition names, in registration order. */
+	/**
+	 * 按注册顺序排列的bean定义名称列表。
+	 *
+	 * List of bean definition names, in registration order.
+	 */
 	private volatile List<String> beanDefinitionNames = new ArrayList<>(256);
 
-	/** List of names of manually registered singletons, in registration order. */
+	/**
+	 * 手工注册的单例的名字列表，按注册顺序排列。
+	 *
+	 * List of names of manually registered singletons, in registration order.
+	 */
 	private volatile Set<String> manualSingletonNames = new LinkedHashSet<>(16);
 
-	/** Cached array of bean definition names in case of frozen configuration. */
+	/**
+	 * 在配置冻结时缓存的bean定义名称数组。
+	 *
+	 * Cached array of bean definition names in case of frozen configuration.
+	 */
 	@Nullable
 	private volatile String[] frozenBeanDefinitionNames;
 
-	/** Whether bean definition metadata may be cached for all beans. */
+	/**
+	 * 是否可以为所有bean缓存bean定义元数据。
+	 *
+	 * Whether bean definition metadata may be cached for all beans.
+	 */
 	private volatile boolean configurationFrozen;
-
 
 	/**
 	 * Create a new DefaultListableBeanFactory.
@@ -981,6 +1004,10 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 
 		if (beanDefinition instanceof AbstractBeanDefinition) {
 			try {
+				/*
+				 * 主要校验methodOverrides与factoryMethodName不能共存，
+				 * 如果已经加载了bean class，校验methodOverrides方法是否存在
+				 */
 				((AbstractBeanDefinition) beanDefinition).validate();
 			}
 			catch (BeanDefinitionValidationException ex) {
@@ -989,9 +1016,12 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 			}
 		}
 
+		//看容器中时候已经存在同名的BeanDefinition
 		BeanDefinition existingDefinition = this.beanDefinitionMap.get(beanName);
 		if (existingDefinition != null) {
+			//已经注册过，判断是否允许覆盖，默认允许
 			if (!isAllowBeanDefinitionOverriding()) {
+				// 不允许，抛出异常
 				throw new BeanDefinitionOverrideException(beanName, beanDefinition, existingDefinition);
 			}
 			else if (existingDefinition.getRole() < beanDefinition.getRole()) {
@@ -1016,33 +1046,46 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 							"] with [" + beanDefinition + "]");
 				}
 			}
+			// 放置到beanDefinitionMap中
 			this.beanDefinitionMap.put(beanName, beanDefinition);
 		}
 		else {
+			// 没有注册过，判断bean创建阶段是否已启动
 			if (hasBeanCreationStarted()) {
 				// Cannot modify startup-time collection elements anymore (for stable iteration)
+				// 不能再修改启动时收集元素(对于稳定迭代)
 				synchronized (this.beanDefinitionMap) {
+					//  放置到beanDefinitionMap中，完成注册
 					this.beanDefinitionMap.put(beanName, beanDefinition);
+					// 修改bean定义名称列表，保证并发时的顺序
 					List<String> updatedDefinitions = new ArrayList<>(this.beanDefinitionNames.size() + 1);
 					updatedDefinitions.addAll(this.beanDefinitionNames);
 					updatedDefinitions.add(beanName);
 					this.beanDefinitionNames = updatedDefinitions;
+					// 从手工注册的单例的名字列表中移除
 					removeManualSingletonName(beanName);
 				}
 			}
 			else {
 				// Still in startup registration phase
+				// 仍然处于启动注册阶段
 				this.beanDefinitionMap.put(beanName, beanDefinition);
+				//添加在bean定义名称列表
 				this.beanDefinitionNames.add(beanName);
+				// 从手工注册的单例的名字列表中移除
 				removeManualSingletonName(beanName);
 			}
+			//清除冻结的bean定义名称列表
 			this.frozenBeanDefinitionNames = null;
 		}
 
+		// 如果已经注册过同名的bean定义，或单例容器中已经存在beanName相同的bean
 		if (existingDefinition != null || containsSingleton(beanName)) {
+			//尝试重置所有已经注册过的BeanDefinition缓存
 			resetBeanDefinition(beanName);
 		}
 		else if (isConfigurationFrozen()) {
+			// 配置冻结，清理byType缓存
 			clearByTypeCache();
 		}
 	}
@@ -1089,19 +1132,23 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 	 */
 	protected void resetBeanDefinition(String beanName) {
 		// Remove the merged bean definition for the given bean, if already created.
+		// 清楚合并过的BeanDefinition缓存
 		clearMergedBeanDefinition(beanName);
 
 		// Remove corresponding bean from singleton cache, if any. Shouldn't usually
 		// be necessary, rather just meant for overriding a context's default beans
 		// (e.g. the default StaticMessageSource in a StaticApplicationContext).
+		//销毁单例缓存中的bean
 		destroySingleton(beanName);
 
 		// Notify all post-processors that the specified bean definition has been reset.
+		// 触发MergedBeanDefinitionPostProcessor进行resetBeanDefinition操作
 		for (MergedBeanDefinitionPostProcessor processor : getBeanPostProcessorCache().mergedDefinition) {
 			processor.resetBeanDefinition(beanName);
 		}
 
 		// Reset all bean definitions that have the given bean as parent (recursively).
+		// 重置所有以给定bean为父bean的BeanDefinition(递归)
 		for (String bdName : this.beanDefinitionNames) {
 			if (!beanName.equals(bdName)) {
 				BeanDefinition bd = this.beanDefinitionMap.get(bdName);
@@ -1159,6 +1206,8 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 	}
 
 	/**
+	 *  更新工厂的内部手工单例名称集。
+	 *
 	 * Update the factory's internal set of manual singleton names.
 	 * @param action the modification action
 	 * @param condition a precondition for the modification action

@@ -20,6 +20,11 @@ import org.springframework.lang.Nullable;
 import org.springframework.util.ResourceUtils;
 
 /**
+ * 用于加载Resource的策略接口；主要应用于根据给定的资源文件地址返回对应Resource；
+ * ApplicationContext必须提供该接口的附加功能的ResourcePatternResolver的扩展支持，
+ * 因此所有ApplicationContext都可以用来获取Resource实例。
+ *
+ *
  * Strategy interface for loading resources (e.g., class path or file system
  * resources). An {@link org.springframework.context.ApplicationContext}
  * is required to provide this functionality plus extended

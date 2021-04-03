@@ -121,17 +121,24 @@ public abstract class AopConfigUtils {
 		Assert.notNull(registry, "BeanDefinitionRegistry must not be null");
 
 		if (registry.containsBeanDefinition(AUTO_PROXY_CREATOR_BEAN_NAME)) {
+			//已经注册过org.springframework.aop.config.internalAutoProxyCreator
 			BeanDefinition apcDefinition = registry.getBeanDefinition(AUTO_PROXY_CREATOR_BEAN_NAME);
 			if (!cls.getName().equals(apcDefinition.getBeanClassName())) {
+				// 不是同一个类，比较优先级，使用优先级高的进行替换
 				int currentPriority = findPriorityForClass(apcDefinition.getBeanClassName());
 				int requiredPriority = findPriorityForClass(cls);
 				if (currentPriority < requiredPriority) {
 					apcDefinition.setBeanClassName(cls.getName());
 				}
 			}
+			// 是同一个类，直接返回
 			return null;
 		}
 
+		/*
+		 * 没注册过，注册一个beanName为org.springframework.aop.config.internalAutoProxyCreator,
+		 * class 为AnnotationAwareAspectJAutoProxyCreator 的BeanDefinition
+		 */
 		RootBeanDefinition beanDefinition = new RootBeanDefinition(cls);
 		beanDefinition.setSource(source);
 		beanDefinition.getPropertyValues().add("order", Ordered.HIGHEST_PRECEDENCE);

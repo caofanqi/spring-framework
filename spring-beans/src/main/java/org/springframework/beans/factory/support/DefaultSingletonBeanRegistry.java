@@ -549,6 +549,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	 */
 	public void destroySingleton(String beanName) {
 		// Remove a registered singleton of the given name, if any.
+		// 如果有已注册的单例，删除它。
 		removeSingleton(beanName);
 
 		// Destroy the corresponding DisposableBean instance.

@@ -126,6 +126,11 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 	public static final int DEPENDENCY_CHECK_ALL = 3;
 
 	/**
+	 * 常量，指示容器应尝试推断bean的销毁方法名，而不是显示指定方法名。
+	 * (inferred)是为了确保不可能与具有合法命名的方法发生冲突。因为包含非法字符();
+	 *
+	 * 当前，在destroy方法推断期间，检测到的方法名是"close" 和 "shutdown"，如果在特定bean中存在的话。
+	 *
 	 * Constant that indicates the container should attempt to infer the
 	 * {@link #setDestroyMethodName destroy method name} for a bean as opposed to
 	 * explicit specification of a method name. The value {@value} is specifically
@@ -137,69 +142,94 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 	 */
 	public static final String INFER_METHOD = "(inferred)";
 
-
+	/**存放全限定名字符串或class对象*/
 	@Nullable
 	private volatile Object beanClass;
 
+	/**bean的作用域*/
 	@Nullable
 	private String scope = SCOPE_DEFAULT;
 
+	/**是否是抽象类*/
 	private boolean abstractFlag = false;
 
+	/**是否懒加载*/
 	@Nullable
 	private Boolean lazyInit;
 
+	/**自动注入模式*/
 	private int autowireMode = AUTOWIRE_NO;
 
+	/**依赖检查,默认不进行依赖检查*/
 	private int dependencyCheck = DEPENDENCY_CHECK_NONE;
 
+	/**依赖的beans*/
 	@Nullable
 	private String[] dependsOn;
 
+	/**自己是否作为其他bean的自动装配候选者*/
 	private boolean autowireCandidate = true;
 
+	/**自己是否作为自动装配首选者*/
 	private boolean primary = false;
 
+	/**存放自动注入更高级的选择 qualifier */
 	private final Map<String, AutowireCandidateQualifier> qualifiers = new LinkedHashMap<>();
 
+	/** 提供一个supplier用于实例化bean，编程方式注册bean的另一种实例化选择*/
 	@Nullable
 	private Supplier<?> instanceSupplier;
 
+	/**是否允许访问非public方法，默认为true*/
 	private boolean nonPublicAccessAllowed = true;
 
+	/**是否以宽松方式解析构造函数，默认weitrue*/
 	private boolean lenientConstructorResolution = true;
 
+	/**对应bean标签中的factory-bean*/
 	@Nullable
 	private String factoryBeanName;
 
+	/**对应bean标签中的factory-method*/
 	@Nullable
 	private String factoryMethodName;
 
+	/**存放构造函数参数*/
 	@Nullable
 	private ConstructorArgumentValues constructorArgumentValues;
 
+	/**存放property标签的属性值*/
 	@Nullable
 	private MutablePropertyValues propertyValues;
 
+	/**存放方法注入的参数lookup-method*/
 	private MethodOverrides methodOverrides = new MethodOverrides();
 
+	/**初始化方法名称*/
 	@Nullable
 	private String initMethodName;
 
+	/**销毁方法名称*/
 	@Nullable
 	private String destroyMethodName;
 
+	/**是否执行初始化方法*/
 	private boolean enforceInitMethod = true;
 
+	/**是否执行销毁方法*/
 	private boolean enforceDestroyMethod = true;
 
+	/**是否是合成的，也就是说是不是Spring自己的，而不是我们定义的，用于判断某些逻辑是否执行*/
 	private boolean synthetic = false;
 
+	/**该bean的角色， 用户，外部复杂配置，内部使用 */
 	private int role = BeanDefinition.ROLE_APPLICATION;
 
+	/**描述信息*/
 	@Nullable
 	private String description;
 
+	/**资源对象*/
 	@Nullable
 	private Resource resource;
 
@@ -1113,12 +1143,14 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 	 * @throws BeanDefinitionValidationException in case of validation failure
 	 */
 	public void validate() throws BeanDefinitionValidationException {
+		//methodOverrides与factoryMethodName不能共存
 		if (hasMethodOverrides() && getFactoryMethodName() != null) {
 			throw new BeanDefinitionValidationException(
 					"Cannot combine factory method with container-generated method overrides: " +
 					"the factory method must create the concrete bean instance.");
 		}
 		if (hasBeanClass()) {
+			//如果已经加载了bean class，校验methodOverrides方法是否存在
 			prepareMethodOverrides();
 		}
 	}
@@ -1151,6 +1183,7 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 		}
 		else if (count == 1) {
 			// Mark override as not overloaded, to avoid the overhead of arg type checking.
+			// 标记为不未重载，在使用CGLIB增强阶段就不用校验了
 			mo.setOverloaded(false);
 		}
 	}

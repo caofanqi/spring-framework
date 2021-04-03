@@ -1,0 +1,8 @@
+description = "Study Spring Source Code"
+
+dependencies {
+    compile(project(":spring-core"))
+    compile(project(":spring-beans"))
+    compile(project(":spring-aop"))
+
+}

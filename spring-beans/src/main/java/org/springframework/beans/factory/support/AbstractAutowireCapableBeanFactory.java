@@ -174,13 +174,22 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 	 */
 	public AbstractAutowireCapableBeanFactory() {
 		super();
+		/**
+		 * 忽略给定接口的自动装配功能;
+		 * 在执行{@link #doCreateBean(String, RootBeanDefinition, Object[])} 方法进行创建Bean实例中，
+		 * 在填充属性 {@link #populateBean(String, RootBeanDefinition, BeanWrapper)} 方法执行完成后，通过执行
+		 * initializeBean(String,Object,RootBeanDefinition)方法中的{@link #invokeAwareMethods(String, Object)}
+		 * 会对这里忽略掉的三种Aware类型的setXXX方法进行调用。
+		 */
 		ignoreDependencyInterface(BeanNameAware.class);
 		ignoreDependencyInterface(BeanFactoryAware.class);
 		ignoreDependencyInterface(BeanClassLoaderAware.class);
-		if (NativeDetector.inNativeImage()) {
+		if (NativeDetector.inNativeImage()) {  //检测GraalVM本机镜像环境，默认为false
+			//设置实例化策略为SimpleInstantiationStrategy
 			this.instantiationStrategy = new SimpleInstantiationStrategy();
 		}
 		else {
+			// 设置实例化策略为CglibSubclassingInstantiationStrategy,该策略继承了SimpleInstantiationStrategy
 			this.instantiationStrategy = new CglibSubclassingInstantiationStrategy();
 		}
 	}
