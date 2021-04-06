@@ -166,6 +166,8 @@ public class BeanWrapperImpl extends AbstractNestablePropertyAccessor implements
 	}
 
 	/**
+	 * 获取包装对象的延迟初始化CachedIntrospectionResults实例。
+	 *
 	 * Obtain a lazily initialized CachedIntrospectionResults instance
 	 * for the wrapped object.
 	 */
@@ -328,6 +330,7 @@ public class BeanWrapperImpl extends AbstractNestablePropertyAccessor implements
 				}
 			}
 			else {
+				// 使用set方法反射赋值
 				ReflectionUtils.makeAccessible(writeMethod);
 				writeMethod.invoke(getWrappedInstance(), value);
 			}

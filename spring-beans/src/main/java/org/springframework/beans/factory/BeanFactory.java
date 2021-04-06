@@ -117,6 +117,10 @@ import org.springframework.lang.Nullable;
 public interface BeanFactory {
 
 	/**
+	 * 使用该前缀来获取FactoryBean实例，而不是FactoryBean生产的实例。
+	 * 例如bean name为 myJndiObject是一个FactoryBean，通过&myJndiObject获取到的就是工厂，
+	 * 而通过myJndiObject获取到的是工厂产生的对象。
+	 *
 	 * Used to dereference a {@link FactoryBean} instance and distinguish it from
 	 * beans <i>created</i> by the FactoryBean. For example, if the bean named
 	 * {@code myJndiObject} is a FactoryBean, getting {@code &myJndiObject}

@@ -93,31 +93,59 @@ public class RootBeanDefinition extends AbstractBeanDefinition {
 	@Nullable
 	volatile String resolvedDestroyMethodName;
 
-	/** Common lock for the four constructor fields below. */
+	/**
+	 * 下面四个构造函数字段公共锁锁。
+	 *
+	 * Common lock for the four constructor fields below.
+	 */
 	final Object constructorArgumentLock = new Object();
 
-	/** Package-visible field for caching the resolved constructor or factory method. */
+	/**
+	 * 包可见字段，缓存解析的构造函数或工厂方法
+	 *
+	 * Package-visible field for caching the resolved constructor or factory method.
+	 */
 	@Nullable
 	Executable resolvedConstructorOrFactoryMethod;
 
-	/** Package-visible field that marks the constructor arguments as resolved. */
+	/**
+	 * 包可见字段，将构造函数参数标记为以解析
+	 *
+	 * Package-visible field that marks the constructor arguments as resolved.
+	 */
 	boolean constructorArgumentsResolved = false;
 
-	/** Package-visible field for caching fully resolved constructor arguments. */
+	/**
+	 * 包可见字段，缓存完全解析的构造函数参数
+	 *
+	 * Package-visible field for caching fully resolved constructor arguments.
+	 */
 	@Nullable
 	Object[] resolvedConstructorArguments;
 
-	/** Package-visible field for caching partly prepared constructor arguments. */
+	/**
+	 * 包可见字段，缓存部分准备好的构造函数参数
+	 *
+	 * Package-visible field for caching partly prepared constructor arguments.
+	 */
 	@Nullable
 	Object[] preparedConstructorArguments;
 
 	/** Common lock for the two post-processing fields below. */
 	final Object postProcessingLock = new Object();
 
-	/** Package-visible field that indicates MergedBeanDefinitionPostProcessor having been applied. */
+	/**
+	 * 包可见字段，指示已应用MergedBeanDefinitionPostProcessor。
+	 *
+	 * Package-visible field that indicates MergedBeanDefinitionPostProcessor having been applied.
+	 */
 	boolean postProcessed = false;
 
-	/** Package-visible field that indicates a before-instantiation post-processor having kicked in. */
+	/**
+	 *  包可见字段，指示后置处理器的before-instantiation已启动。
+	 *
+	 * Package-visible field that indicates a before-instantiation post-processor having kicked in.
+	 */
 	@Nullable
 	volatile Boolean beforeInstantiationResolved;
 
@@ -329,6 +357,8 @@ public class RootBeanDefinition extends AbstractBeanDefinition {
 	}
 
 	/**
+	 * 返回此bean定义的目标类型（如果已知）（预先指定或在第一次实例化时解析）。
+	 *
 	 * Return the target type of this bean definition, if known
 	 * (either specified in advance or resolved on first instantiation).
 	 * @since 3.2.2
@@ -370,6 +400,8 @@ public class RootBeanDefinition extends AbstractBeanDefinition {
 	}
 
 	/**
+	 * <p>确定用于默认构造的首选构造函数（如果有）。如果需要，构造函数参数将自动连接。</p>
+	 *
 	 * Determine preferred constructors to use for default construction, if any.
 	 * Constructor arguments will be autowired if necessary.
 	 * @return one or more preferred constructors, or {@code null} if none

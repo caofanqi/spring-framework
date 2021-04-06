@@ -41,6 +41,11 @@ import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StringUtils;
 
 /**
+ * 实现DisposableBean和Runnable接口的适配器，在给定bean实例上执行各种销毁步骤：
+ * DestructionAwareBeanPostProcessors；
+ * 实现DisposableBean接口的bean；
+ * 指定的自定义销毁方法；
+ *
  * Adapter that implements the {@link DisposableBean} and {@link Runnable}
  * interfaces performing various destruction steps on a given bean instance:
  * <ul>
@@ -90,6 +95,8 @@ class DisposableBeanAdapter implements DisposableBean, Runnable, Serializable {
 
 
 	/**
+	 * 为给定bean创建一个新的DisposableBeanAdapter。
+	 *
 	 * Create a new DisposableBeanAdapter for the given bean.
 	 * @param bean the bean instance (never {@code null})
 	 * @param beanName the name of the bean
@@ -373,6 +380,8 @@ class DisposableBeanAdapter implements DisposableBean, Runnable, Serializable {
 	}
 
 	/**
+	 * 检查给定bean是否有应用于它的destruction-aware post-processors。
+	 *
 	 * Check whether the given bean has destruction-aware post-processors applying to it.
 	 * @param bean the bean instance
 	 * @param postProcessors the post-processor candidates

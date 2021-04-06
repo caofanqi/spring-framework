@@ -123,6 +123,10 @@ public abstract class BeanUtils {
 	}
 
 	/**
+	 * <p>使用其“primary”构造函数（对于Kotlin类，可能声明了默认参数）
+	 * 或其默认构造函数（对于常规Java类，需要标准的no arg设置）实例化类。<p/>
+	 * <p>请注意，如果给定了不可访问（即非公共）构造函数，则此方法尝试将构造函数设置为可访问。<p/>
+	 *
 	 * Instantiate a class using its 'primary' constructor (for Kotlin classes,
 	 * potentially having default arguments declared) or its default constructor
 	 * (for regular Java classes, expecting a standard no-arg setup).
@@ -141,12 +145,15 @@ public abstract class BeanUtils {
 	public static <T> T instantiateClass(Class<T> clazz) throws BeanInstantiationException {
 		Assert.notNull(clazz, "Class must not be null");
 		if (clazz.isInterface()) {
+			//是接口，直接抛出异常
 			throw new BeanInstantiationException(clazz, "Specified class is an interface");
 		}
 		try {
+			//使用默认构造函数实例化
 			return instantiateClass(clazz.getDeclaredConstructor());
 		}
 		catch (NoSuchMethodException ex) {
+			//Kotlin支持
 			Constructor<T> ctor = findPrimaryConstructor(clazz);
 			if (ctor != null) {
 				return instantiateClass(ctor);
@@ -178,6 +185,9 @@ public abstract class BeanUtils {
 	}
 
 	/**
+	 * 使用给定构造函数实例化类的便利方法。
+	 * <p>注意，如果给定一个不可访问（即非public）的构造函数，这个方法会尝试将构造函数设置为可访问的，并且支持带有可选参数和默认值的Kotlin类。<p>
+	 *
 	 * Convenience method to instantiate a class using the given constructor.
 	 * <p>Note that this method tries to set the constructor accessible if given a
 	 * non-accessible (that is, non-public) constructor, and supports Kotlin classes
@@ -192,13 +202,16 @@ public abstract class BeanUtils {
 	public static <T> T instantiateClass(Constructor<T> ctor, Object... args) throws BeanInstantiationException {
 		Assert.notNull(ctor, "Constructor must not be null");
 		try {
+			//设置为可访问的
 			ReflectionUtils.makeAccessible(ctor);
 			if (KotlinDetector.isKotlinReflectPresent() && KotlinDetector.isKotlinType(ctor.getDeclaringClass())) {
 				return KotlinDelegate.instantiateClass(ctor, args);
 			}
 			else {
+				//获取构造函数参数类型
 				Class<?>[] parameterTypes = ctor.getParameterTypes();
 				Assert.isTrue(args.length <= parameterTypes.length, "Can't specify more arguments than constructor parameters");
+				// 参数设置
 				Object[] argsWithDefaultValues = new Object[args.length];
 				for (int i = 0 ; i < args.length; i++) {
 					if (args[i] == null) {
@@ -209,6 +222,7 @@ public abstract class BeanUtils {
 						argsWithDefaultValues[i] = args[i];
 					}
 				}
+				//实例化
 				return ctor.newInstance(argsWithDefaultValues);
 			}
 		}

@@ -81,11 +81,14 @@ public class CglibSubclassingInstantiationStrategy extends SimpleInstantiationSt
 			@Nullable Constructor<?> ctor, Object... args) {
 
 		// Must generate CGLIB subclass...
+		// 必须生成CGLIB子类
 		return new CglibSubclassCreator(bd, owner).instantiate(ctor, args);
 	}
 
 
 	/**
+	 * 在Spring 3.2之前的版本中，为避免外部CGLIB依赖而创建的内部类。<p>
+	 *
 	 * An inner class created for historical reasons to avoid external CGLIB dependency
 	 * in Spring versions earlier than 3.2.
 	 */
@@ -104,6 +107,8 @@ public class CglibSubclassingInstantiationStrategy extends SimpleInstantiationSt
 		}
 
 		/**
+		 * <p>为实现所需lookup-method动态生成一个子类创建一个新实例。</p>
+		 *
 		 * Create a new instance of a dynamically generated subclass implementing the
 		 * required lookups.
 		 * @param ctor constructor to use. If this is {@code null}, use the
@@ -113,13 +118,16 @@ public class CglibSubclassingInstantiationStrategy extends SimpleInstantiationSt
 		 * @return new instance of the dynamically generated subclass
 		 */
 		public Object instantiate(@Nullable Constructor<?> ctor, Object... args) {
+			// 通过给定bean定义，使用CGLIB创建一个子类
 			Class<?> subclass = createEnhancedSubclass(this.beanDefinition);
 			Object instance;
 			if (ctor == null) {
+				//使用默认构造函数实例化
 				instance = BeanUtils.instantiateClass(subclass);
 			}
 			else {
 				try {
+					//获取子类相同参数的构造函数并实例化
 					Constructor<?> enhancedSubclassConstructor = subclass.getConstructor(ctor.getParameterTypes());
 					instance = enhancedSubclassConstructor.newInstance(args);
 				}
@@ -130,6 +138,7 @@ public class CglibSubclassingInstantiationStrategy extends SimpleInstantiationSt
 			}
 			// SPR-10785: set callbacks directly on the instance instead of in the
 			// enhanced class (via the Enhancer) in order to avoid memory leaks.
+			//直接在实例上设置回调，而不是在增强类（通过增强器）以避免内存泄漏。
 			Factory factory = (Factory) instance;
 			factory.setCallbacks(new Callback[] {NoOp.INSTANCE,
 					new LookupOverrideMethodInterceptor(this.beanDefinition, this.owner),
@@ -138,6 +147,8 @@ public class CglibSubclassingInstantiationStrategy extends SimpleInstantiationSt
 		}
 
 		/**
+		 * <p>使用CGLIB为提供的bean定义创建bean class的增强子类。</p>
+		 *
 		 * Create an enhanced subclass of the bean class for the provided bean
 		 * definition, using CGLIB.
 		 */
@@ -157,6 +168,8 @@ public class CglibSubclassingInstantiationStrategy extends SimpleInstantiationSt
 
 
 	/**
+	 * <p>Class提供CGLIB所需的hashCode和equals方法，以确保CGLIB不会为每个bean生成不同的类。标识基于class和bean definition。</p>
+	 *
 	 * Class providing hashCode and equals methods required by CGLIB to
 	 * ensure that CGLIB doesn't generate a distinct class per bean.
 	 * Identity is based on class and bean definition.
@@ -187,6 +200,8 @@ public class CglibSubclassingInstantiationStrategy extends SimpleInstantiationSt
 
 
 	/**
+	 * <p>用于筛选方法拦截行为的CGLIB回调。</p>
+	 *
 	 * CGLIB callback for filtering method interception behavior.
 	 */
 	private static class MethodOverrideCallbackFilter extends CglibIdentitySupport implements CallbackFilter {
@@ -219,6 +234,9 @@ public class CglibSubclassingInstantiationStrategy extends SimpleInstantiationSt
 
 
 	/**
+	 *
+	 * <p>CGLIB MethodInterceptor重写方法，返回在容器中查找的bean的实现替换它们。</p>
+	 *
 	 * CGLIB MethodInterceptor to override methods, replacing them with an
 	 * implementation that returns a bean looked up in the container.
 	 */
@@ -238,6 +256,7 @@ public class CglibSubclassingInstantiationStrategy extends SimpleInstantiationSt
 			Assert.state(lo != null, "LookupOverride not found");
 			Object[] argsToUse = (args.length > 0 ? args : null);  // if no-arg, don't insist on args at all
 			if (StringUtils.hasText(lo.getBeanName())) {
+				// 调用容器的getBean()进行返回
 				Object bean = (argsToUse != null ? this.owner.getBean(lo.getBeanName(), argsToUse) :
 						this.owner.getBean(lo.getBeanName()));
 				// Detect package-protected NullBean instance through equals(null) check

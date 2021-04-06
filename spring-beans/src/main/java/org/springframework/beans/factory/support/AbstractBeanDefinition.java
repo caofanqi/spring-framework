@@ -100,6 +100,8 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 	public static final int AUTOWIRE_AUTODETECT = AutowireCapableBeanFactory.AUTOWIRE_AUTODETECT;
 
 	/**
+	 * 常量，指示根本不进行依赖项检查
+	 *
 	 * Constant that indicates no dependency check at all.
 	 * @see #setDependencyCheck
 	 */
@@ -913,6 +915,8 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 	}
 
 	/**
+	 * 返回此bean的属性值(永远不要为null)。
+	 *
 	 * Return property values for this bean (never {@code null}).
 	 */
 	@Override
@@ -1156,12 +1160,15 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 	}
 
 	/**
+	 * 验证并准备为此bean定义的方法重写。检查是否存在具有指定名称的方法。
+	 *
 	 * Validate and prepare the method overrides defined for this bean.
 	 * Checks for existence of a method with the specified name.
 	 * @throws BeanDefinitionValidationException in case of validation failure
 	 */
 	public void prepareMethodOverrides() throws BeanDefinitionValidationException {
 		// Check that lookup methods exist and determine their overloaded status.
+		// 检查lookup methods是否存在并确定其重载状态
 		if (hasMethodOverrides()) {
 			getMethodOverrides().getOverrides().forEach(this::prepareMethodOverride);
 		}

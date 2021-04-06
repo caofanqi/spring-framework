@@ -6,11 +6,19 @@
         http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/aop https://www.springframework.org/schema/aop/spring-aop.xsd">
 
-	<bean id="student" class="cn.caofanqi.bean.Student">
+	<bean id="student" class="cn.caofanqi.pojo.Student">
 		<property name="name" value="zhangsan"/>
 		<property name="age" value="23"/>
 	</bean>
 
-	<aop:aspectj-autoproxy proxy-target-class="true"/>
+
+	<bean id="studentRepository" class="cn.caofanqi.repository.StudentRepository" />
+
+	<bean id="studentService" class="cn.caofanqi.service.impl.StudentServiceImpl" autowire="byType" >
+<!--		<constructor-arg name="studentRepository" ref="studentRepository" />-->
+	</bean>
+
+
+<!--	<aop:aspectj-autoproxy proxy-target-class="true"/>-->
 
 </beans>

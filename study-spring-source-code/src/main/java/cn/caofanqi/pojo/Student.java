@@ -1,4 +1,7 @@
-package cn.caofanqi.bean;
+package cn.caofanqi.pojo;
+
+
+import cn.caofanqi.service.StudentService;
 
 public class Student {
 
@@ -28,6 +31,11 @@ public class Student {
 				"name='" + name + '\'' +
 				", age=" + age +
 				'}';
+	}
+
+
+	public void setS(StudentService studentService) {
+		System.out.println("sss");
 	}
 
 }

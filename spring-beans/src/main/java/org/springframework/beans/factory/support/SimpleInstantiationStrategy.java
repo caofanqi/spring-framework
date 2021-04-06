@@ -61,6 +61,7 @@ public class SimpleInstantiationStrategy implements InstantiationStrategy {
 	public Object instantiate(RootBeanDefinition bd, @Nullable String beanName, BeanFactory owner) {
 		// Don't override the class with CGLIB if no overrides.
 		if (!bd.hasMethodOverrides()) {
+			// 没有使用方法重写(lookup-method)
 			Constructor<?> constructorToUse;
 			synchronized (bd.constructorArgumentLock) {
 				constructorToUse = (Constructor<?>) bd.resolvedConstructorOrFactoryMethod;
@@ -75,8 +76,10 @@ public class SimpleInstantiationStrategy implements InstantiationStrategy {
 									(PrivilegedExceptionAction<Constructor<?>>) clazz::getDeclaredConstructor);
 						}
 						else {
+							// 获取无参构造函数
 							constructorToUse = clazz.getDeclaredConstructor();
 						}
+						//设置到bean定义缓存
 						bd.resolvedConstructorOrFactoryMethod = constructorToUse;
 					}
 					catch (Throwable ex) {
@@ -84,10 +87,12 @@ public class SimpleInstantiationStrategy implements InstantiationStrategy {
 					}
 				}
 			}
+			// 实例化
 			return BeanUtils.instantiateClass(constructorToUse);
 		}
 		else {
 			// Must generate CGLIB subclass.
+			// 配置了方法重写，必须使用CGLIB生成子类
 			return instantiateWithMethodInjection(bd, beanName, owner);
 		}
 	}
@@ -107,6 +112,7 @@ public class SimpleInstantiationStrategy implements InstantiationStrategy {
 			final Constructor<?> ctor, Object... args) {
 
 		if (!bd.hasMethodOverrides()) {
+			// 没有使用方法重写(lookup-method)
 			if (System.getSecurityManager() != null) {
 				// use own privileged to change accessibility (when security is on)
 				AccessController.doPrivileged((PrivilegedAction<Object>) () -> {
@@ -114,14 +120,20 @@ public class SimpleInstantiationStrategy implements InstantiationStrategy {
 					return null;
 				});
 			}
+			// 直接通过构造函数和参数实例化
 			return BeanUtils.instantiateClass(ctor, args);
 		}
 		else {
+			// 配置了方法重写，使用方法注入实例化
 			return instantiateWithMethodInjection(bd, beanName, owner, ctor, args);
 		}
 	}
 
 	/**
+	 *如果子类可以用给定的RootBeanDefinition中指定的方法注入实例化一个对象，
+	 * 那么子类可以重写这个方法，这个方法被实现为抛出UnsupportedOperationException。
+	 * 实例化应该使用给定的构造函数和参数。<p>
+	 *
 	 * Subclasses can override this method, which is implemented to throw
 	 * UnsupportedOperationException, if they can instantiate an object with
 	 * the Method Injection specified in the given RootBeanDefinition.

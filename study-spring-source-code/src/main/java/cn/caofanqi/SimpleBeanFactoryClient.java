@@ -1,6 +1,6 @@
 package cn.caofanqi;
 
-import cn.caofanqi.bean.Student;
+import cn.caofanqi.pojo.Student;
 import org.springframework.beans.factory.support.BeanDefinitionReader;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
@@ -21,6 +21,8 @@ public class SimpleBeanFactoryClient {
 		//从工厂中获取Bean实例
 		Student student = (Student) beanFactory.getBean("student");
 		System.out.println(student);
+
+		beanFactory.getBean("studentService");
 
 	}
 

@@ -370,6 +370,8 @@ public class DependencyDescriptor extends InjectionPoint implements Serializable
 	}
 
 	/**
+	 * <p>确定被包装的参数/字段的名称</p>
+	 *
 	 * Determine the name of the wrapped parameter/field.
 	 * @return the declared name (may be {@code null} if unresolvable)
 	 */
