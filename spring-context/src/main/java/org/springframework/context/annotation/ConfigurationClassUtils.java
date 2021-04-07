@@ -75,6 +75,8 @@ abstract class ConfigurationClassUtils {
 
 
 	/**
+	 * <p>检查给定的bean定义是否是配置类的候选(或者是在配置/组件类中声明的嵌套组件类，也要自动注册)，并相应地标记它。</p>
+	 *
 	 * Check whether the given bean definition is a candidate for a configuration class
 	 * (or a nested component class declared within a configuration/component class,
 	 * to be auto-registered as well), and mark it accordingly.
@@ -122,11 +124,14 @@ abstract class ConfigurationClassUtils {
 			}
 		}
 
+		// 获取@Configuration中的属性配置
 		Map<String, Object> config = metadata.getAnnotationAttributes(Configuration.class.getName());
 		if (config != null && !Boolean.FALSE.equals(config.get("proxyBeanMethods"))) {
+			// 配置不为null并且proxyBeanMethods为true，设置为full模式
 			beanDef.setAttribute(CONFIGURATION_CLASS_ATTRIBUTE, CONFIGURATION_CLASS_FULL);
 		}
 		else if (config != null || isConfigurationCandidate(metadata)) {
+			// 是配置候选者，设置为lite模式
 			beanDef.setAttribute(CONFIGURATION_CLASS_ATTRIBUTE, CONFIGURATION_CLASS_LITE);
 		}
 		else {
@@ -134,6 +139,7 @@ abstract class ConfigurationClassUtils {
 		}
 
 		// It's a full or lite configuration candidate... Let's determine the order value, if any.
+		// 设置order
 		Integer order = getOrder(metadata);
 		if (order != null) {
 			beanDef.setAttribute(ORDER_ATTRIBUTE, order);

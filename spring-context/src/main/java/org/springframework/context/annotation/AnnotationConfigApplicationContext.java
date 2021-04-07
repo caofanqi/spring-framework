@@ -61,13 +61,20 @@ public class AnnotationConfigApplicationContext extends GenericApplicationContex
 
 
 	/**
+	 * <p>创建一个新的AnnotationConfigApplicationContext，需要通过调用register方法填充，然后手动执行refresh方法。</p>
 	 * Create a new AnnotationConfigApplicationContext that needs to be populated
 	 * through {@link #register} calls and then manually {@linkplain #refresh refreshed}.
 	 */
 	public AnnotationConfigApplicationContext() {
+		// 父类的无参构造会初始化ResourcePatternResolver和BeanFactory
 		StartupStep createAnnotatedBeanDefReader = this.getApplicationStartup().start("spring.context.annotated-bean-reader.create");
+		/*
+		 * 初始化一个AnnotatedBeanDefinitionReader，将自己作为BeanDefinitionRegistry传递进去。
+		 * 内部会注册跟注解相关的后处理器。
+		 */
 		this.reader = new AnnotatedBeanDefinitionReader(this);
 		createAnnotatedBeanDefReader.end();
+		//初始化一个扫描器，会注册默认的过滤器（@Component注解将会被扫描）
 		this.scanner = new ClassPathBeanDefinitionScanner(this);
 	}
 
@@ -82,14 +89,19 @@ public class AnnotationConfigApplicationContext extends GenericApplicationContex
 	}
 
 	/**
+	 * <p>创建一个新的AnnotationConfigApplicationContext，从给定组件类派生bean definitions并自动刷新上下文</p>
+	 *
 	 * Create a new AnnotationConfigApplicationContext, deriving bean definitions
 	 * from the given component classes and automatically refreshing the context.
 	 * @param componentClasses one or more component classes &mdash; for example,
 	 * {@link Configuration @Configuration} classes
 	 */
 	public AnnotationConfigApplicationContext(Class<?>... componentClasses) {
+		//调用自己的无参构造，内部有逻辑
 		this();
+		//会将componentClasses转换为BeanDefinition注册到容器中
 		register(componentClasses);
+		// 刷新容器（****重要方法）
 		refresh();
 	}
 
@@ -152,6 +164,9 @@ public class AnnotationConfigApplicationContext extends GenericApplicationContex
 	//---------------------------------------------------------------------
 
 	/**
+	 * <p>注册一个或多个组件类。</p>
+	 * <p>注意，必须调用{@link #refresh()} 方法，上下文才能完全处理新类。</p>
+	 *
 	 * Register one or more component classes to be processed.
 	 * <p>Note that {@link #refresh()} must be called in order for the context
 	 * to fully process the new classes.
@@ -165,6 +180,7 @@ public class AnnotationConfigApplicationContext extends GenericApplicationContex
 		Assert.notEmpty(componentClasses, "At least one component class must be specified");
 		StartupStep registerComponentClass = this.getApplicationStartup().start("spring.context.component-classes.register")
 				.tag("classes", () -> Arrays.toString(componentClasses));
+		// 使用AnnotatedBeanDefinitionReader注册
 		this.reader.register(componentClasses);
 		registerComponentClass.end();
 	}

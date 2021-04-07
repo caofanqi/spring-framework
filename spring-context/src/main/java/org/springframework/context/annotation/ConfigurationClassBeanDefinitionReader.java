@@ -180,6 +180,8 @@ class ConfigurationClassBeanDefinitionReader {
 	}
 
 	/**
+	 * <p>读取给定的{@link BeanMethod}，根据其内容向BeanDefinitionRegistry注册bean定义。</p>
+	 *
 	 * Read the given {@link BeanMethod}, registering bean definitions
 	 * with the BeanDefinitionRegistry based on its contents.
 	 */
@@ -292,6 +294,7 @@ class ConfigurationClassBeanDefinitionReader {
 			logger.trace(String.format("Registering bean definition for @Bean method %s.%s()",
 					configClass.getMetadata().getClassName(), beanName));
 		}
+		// 注册bean定义
 		this.registry.registerBeanDefinition(beanName, beanDefToRegister);
 	}
 

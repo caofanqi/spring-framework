@@ -31,6 +31,16 @@ import org.springframework.lang.Nullable;
 import org.springframework.util.ReflectionUtils;
 
 /**
+ * <p>默认的BeanWrapper实现对于所有典型的用例应该足够了。缓存内省结果以提高效率。</p>
+ *
+ * <p>注意：自动注册{@code org.springframework.beans.propertyeditors}包中的默认属性编辑器，除了
+ * JDK的标准PropertyEditors，还应用了这些编辑器。应用程序可以调用{@link #registerCustomEditor(Class, java.beans.PropertyEditor)}
+ * 方法为特殊的实例注册一个编辑器。</p>
+ *
+ * <p><b>注意：从Spring2.5开始，这几乎是一个内部类。</b> 它是public的以便其他框架包进行访问。对于标准的应用程序访问目的，
+ * 使用{@link PropertyAccessorFactory#forBeanPropertyAccess}工厂方法替代。
+ * </p>
+ *
  * Default {@link BeanWrapper} implementation that should be sufficient
  * for all typical use cases. Caches introspection results for efficiency.
  *

@@ -47,6 +47,9 @@ import org.springframework.core.io.support.ResourceArrayPropertyEditor;
 import org.springframework.core.io.support.ResourcePatternResolver;
 
 /**
+ * <p>填充给定PropertyEditorRegistry的PropertyEditorRegistrar实现（通常是用于
+ * 在ApplicationContext中创建bean的BeanWrapper。由AbstractApplicationContext使用）</p>
+ *
  * PropertyEditorRegistrar implementation that populates a given
  * {@link org.springframework.beans.PropertyEditorRegistry}
  * (typically a {@link org.springframework.beans.BeanWrapper} used for bean
@@ -82,6 +85,10 @@ public class ResourceEditorRegistrar implements PropertyEditorRegistrar {
 
 
 	/**
+	 * <p>使用以下资源编辑器填充给定的注册表：ResourceEditor、InputStreamEditor、InputSourceEditor、
+	 * FileEditor、URLEditor、URIEditor、ClassEditor、ClassArrayEditor。</p>
+	 * <p>如果此注册器已配置ResourcePatternResolver，则还将注册ResourceArrayPropertyEditor。</p>
+	 *
 	 * Populate the given {@code registry} with the following resource editors:
 	 * ResourceEditor, InputStreamEditor, InputSourceEditor, FileEditor, URLEditor,
 	 * URIEditor, ClassEditor, ClassArrayEditor.
@@ -121,11 +128,14 @@ public class ResourceEditorRegistrar implements PropertyEditorRegistrar {
 	}
 
 	/**
+	 * <p>如果可能，重写默认编辑器(因为这是我们在这里真正想做的);否则注册为自定义编辑器。</p>
+	 *
 	 * Override default editor, if possible (since that's what we really mean to do here);
 	 * otherwise register as a custom editor.
 	 */
 	private void doRegisterEditor(PropertyEditorRegistry registry, Class<?> requiredType, PropertyEditor editor) {
 		if (registry instanceof PropertyEditorRegistrySupport) {
+			// 覆盖默认编辑器
 			((PropertyEditorRegistrySupport) registry).overrideDefaultEditor(requiredType, editor);
 		}
 		else {

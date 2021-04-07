@@ -79,6 +79,8 @@ import org.springframework.lang.Nullable;
 import org.springframework.util.ClassUtils;
 
 /**
+ * <p>PropertyEditorRegistry接口的基本实现。提供默认编辑器和自定义编辑器的管理。主要用作BeanWrapperImpl的基类。</p>
+ *
  * Base implementation of the {@link PropertyEditorRegistry} interface.
  * Provides management of default editors and custom editors.
  * Mainly serves as base class for {@link BeanWrapperImpl}.
@@ -154,6 +156,9 @@ public class PropertyEditorRegistrySupport implements PropertyEditorRegistry {
 	}
 
 	/**
+	 * <p>激活仅用于配置目的的配置值编辑器，例如StringArrayPropertyEditor。</p>
+	 * <p>默认情况下，这些编辑器没有注册，因为它们通常不适合用于数据绑定目的。当然，您可以在任何情况下通过registerCustomEditor分别注册它们。</p>
+	 *
 	 * Activate config value editors which are only intended for configuration purposes,
 	 * such as {@link org.springframework.beans.propertyeditors.StringArrayPropertyEditor}.
 	 * <p>Those editors are not registered by default simply because they are in
@@ -165,6 +170,10 @@ public class PropertyEditorRegistrySupport implements PropertyEditorRegistry {
 	}
 
 	/**
+	 * <p>使用给定的属性编辑器重写指定类型的默认编辑器。
+	 * 请注意，这与注册自定义编辑器不同，因为该编辑器在语义上仍然是默认编辑器。
+	 * ConversionService将覆盖这样的默认编辑器，而自定义编辑器通常覆盖ConversionService。</p>
+	 *
 	 * Override the default editor for the specified type with the given property editor.
 	 * <p>Note that this is different from registering a custom editor in that the editor
 	 * semantically still is a default editor. A ConversionService will override such a
@@ -193,18 +202,23 @@ public class PropertyEditorRegistrySupport implements PropertyEditorRegistry {
 			return null;
 		}
 		if (this.overriddenDefaultEditors != null) {
+			// 先从overriddenDefaultEditors中获取
 			PropertyEditor editor = this.overriddenDefaultEditors.get(requiredType);
 			if (editor != null) {
 				return editor;
 			}
 		}
 		if (this.defaultEditors == null) {
+			// 创建默认的编辑器
 			createDefaultEditors();
 		}
+		// 从默认编辑器中获取
 		return this.defaultEditors.get(requiredType);
 	}
 
 	/**
+	 * <p>实际注册这个注册表实例的默认编辑器</p>
+	 *
 	 * Actually register the default editors for this registry instance.
 	 */
 	private void createDefaultEditors() {
@@ -316,6 +330,7 @@ public class PropertyEditorRegistrySupport implements PropertyEditorRegistry {
 			if (this.customEditors == null) {
 				this.customEditors = new LinkedHashMap<>(16);
 			}
+			// 添加到自定义属性编辑器
 			this.customEditors.put(requiredType, propertyEditor);
 			this.customEditorCache = null;
 		}

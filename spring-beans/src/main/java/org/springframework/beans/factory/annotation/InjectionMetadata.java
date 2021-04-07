@@ -103,6 +103,7 @@ public class InjectionMetadata {
 		for (InjectedElement element : this.injectedElements) {
 			Member member = element.getMember();
 			if (!beanDefinition.isExternallyManagedConfigMember(member)) {
+				// 注册到bean定义中
 				beanDefinition.registerExternallyManagedConfigMember(member);
 				checkedElements.add(element);
 			}
@@ -116,6 +117,7 @@ public class InjectionMetadata {
 				(checkedElements != null ? checkedElements : this.injectedElements);
 		if (!elementsToIterate.isEmpty()) {
 			for (InjectedElement element : elementsToIterate) {
+				// 属性注入
 				element.inject(target, beanName, pvs);
 			}
 		}

@@ -17,6 +17,9 @@
 package org.springframework.beans;
 
 /**
+ * <p>用于将自定义属性编辑器(PropertyEditor)注册到属性编辑器注册表(PropertyEditorRegistry)的策略接口。</p>
+ * <p>当需要在不同的情况下使用相同的属性编辑器是，这是非常有用的：写一个相应的registrar，并在每种情况下重用它</p>
+ *
  * Interface for strategies that register custom
  * {@link java.beans.PropertyEditor property editors} with a
  * {@link org.springframework.beans.PropertyEditorRegistry property editor registry}.

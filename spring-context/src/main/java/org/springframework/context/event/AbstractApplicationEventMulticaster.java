@@ -481,6 +481,8 @@ public abstract class AbstractApplicationEventMulticaster
 
 
 	/**
+	 * <p>封装一组通用目标侦听器的Helper类.</p>
+	 *
 	 * Helper class that encapsulates a general set of target listeners.
 	 */
 	private class DefaultListenerRetriever {

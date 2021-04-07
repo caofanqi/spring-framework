@@ -215,6 +215,9 @@ public interface ListableBeanFactory extends BeanFactory {
 	String[] getBeanNamesForType(@Nullable Class<?> type);
 
 	/**
+	 * <p>返回与给定类型(包括子类)匹配的bean的名称，根据bean定义或getObjectType(对于FactoryBeans)的值进行判断。</p>
+	 * <p>注意:此方法只内省顶级bean。它也不检查可能与指定类型匹配的嵌套bean。</p>
+	 *
 	 * Return the names of beans matching the given type (including subclasses),
 	 * judging from either bean definitions or the value of {@code getObjectType}
 	 * in the case of FactoryBeans.

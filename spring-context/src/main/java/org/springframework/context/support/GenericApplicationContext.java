@@ -110,6 +110,7 @@ public class GenericApplicationContext extends AbstractApplicationContext implem
 	 * @see #refresh
 	 */
 	public GenericApplicationContext() {
+		// 初始化BeanFactory
 		this.beanFactory = new DefaultListableBeanFactory();
 	}
 
@@ -263,6 +264,8 @@ public class GenericApplicationContext extends AbstractApplicationContext implem
 	//---------------------------------------------------------------------
 
 	/**
+	 * <p>啥也不做：我们拥有一个内部BeanFactory并依赖于调用者通过我们的公共方法注册bean。</p>
+	 *
 	 * Do nothing: We hold a single internal BeanFactory and rely on callers
 	 * to register beans through our public methods (or the BeanFactory's).
 	 * @see #registerBeanDefinition

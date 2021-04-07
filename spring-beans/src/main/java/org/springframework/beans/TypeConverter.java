@@ -23,6 +23,9 @@ import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.lang.Nullable;
 
 /**
+ * <p>定义类型转换方法的接口。通常(但不一定)与PropertyEditorRegistry接口一起实现。</p>
+ * <p>注意:因为TypeConverter实现通常基于不是线程安全的PropertyEditor，所以TypeConverter本身也不能被认为是线程安全的。</p>
+ *
  * Interface that defines type conversion methods. Typically (but not necessarily)
  * implemented in conjunction with the {@link PropertyEditorRegistry} interface.
  *
@@ -38,6 +41,9 @@ import org.springframework.lang.Nullable;
 public interface TypeConverter {
 
 	/**
+	 * <p>将值转换为所需的类型(如果需要，从字符串)。</p>
+	 * <p>从字符串到任何类型的转换通常会使用PropertyEditor类的setAsText方法，或者使用ConversionService中的Spring转换器。</p>
+	 *
 	 * Convert the value to the required type (if necessary from a String).
 	 * <p>Conversions from String to any type will typically use the {@code setAsText}
 	 * method of the PropertyEditor class, or a Spring Converter in a ConversionService.
