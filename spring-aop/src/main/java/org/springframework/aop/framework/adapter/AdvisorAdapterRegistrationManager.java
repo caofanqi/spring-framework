@@ -20,6 +20,9 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 
 /**
+ * <p>使用AdvisorAdapterRegistry(默认为GlobalAdvisorAdapterRegistry)在BeanFactory中注册AdvisorAdapter bean的BeanPostProcessor。</p>
+ * <p>它工作的唯一要求是，它需要在应用程序上下文中与需要被Spring AOP框架“识别”的“非本机”Spring AdvisorAdapters一起定义。</p>
+ *
  * BeanPostProcessor that registers {@link AdvisorAdapter} beans in the BeanFactory with
  * an {@link AdvisorAdapterRegistry} (by default the {@link GlobalAdvisorAdapterRegistry}).
  *

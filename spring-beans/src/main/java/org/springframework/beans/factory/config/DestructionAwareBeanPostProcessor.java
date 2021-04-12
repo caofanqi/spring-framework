@@ -19,6 +19,9 @@ package org.springframework.beans.factory.config;
 import org.springframework.beans.BeansException;
 
 /**
+ * <p>BeanPostProcessor的子接口，用于添加销毁前回调。</p>
+ * <p>典型的用法是对特定bean类型调用自定义销毁回调，与相应的初始化回调相匹配。</p>
+ *
  * Subinterface of {@link BeanPostProcessor} that adds a before-destruction callback.
  *
  * <p>The typical usage will be to invoke custom destruction callbacks on
@@ -30,6 +33,10 @@ import org.springframework.beans.BeansException;
 public interface DestructionAwareBeanPostProcessor extends BeanPostProcessor {
 
 	/**
+	 * <p>在给定bean实例销毁之前，将此BeanPostProcessor应用于该实例，例如调用自定义销毁回调。</p>
+	 * <p>与DisposableBean的destroy方法和自定义销毁方法一样，此回调仅适用于容器完全管理生命周期的bean。
+	 * 对于单例和作用域bean通常是这样。</p>
+	 *
 	 * Apply this BeanPostProcessor to the given bean instance before its
 	 * destruction, e.g. invoking custom destruction callbacks.
 	 * <p>Like DisposableBean's {@code destroy} and a custom destroy method, this
@@ -44,6 +51,9 @@ public interface DestructionAwareBeanPostProcessor extends BeanPostProcessor {
 	void postProcessBeforeDestruction(Object bean, String beanName) throws BeansException;
 
 	/**
+	 * <p>确定给定的bean实例是否需要此后处理器销毁。</p>
+	 * <p>默认实现返回true。如果DestructionAwareBeanPostProcessor的pre-5实现没有提供此方法的具体实现，Spring也会默认为true。</p>
+	 *
 	 * Determine whether the given bean instance requires destruction by this
 	 * post-processor.
 	 * <p>The default implementation returns {@code true}. If a pre-5 implementation

@@ -779,6 +779,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		/*
 		 * 对AspectJ加载时织入的支持
 		 * 检测loadTimeWeaver是否存在，如果返现准备编织；
+		 * (在这里先判断一次，是因为AbstractRefreshableApplicationContext类型的bean工厂已经完成了bean定义的加载)
 		 */
 		if (!NativeDetector.inNativeImage() && beanFactory.containsBean(LOAD_TIME_WEAVER_BEAN_NAME)) {
 			beanFactory.addBeanPostProcessor(new LoadTimeWeaverAwareProcessor(beanFactory));
@@ -827,7 +828,10 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 
 		// Detect a LoadTimeWeaver and prepare for weaving, if found in the meantime
 		// (e.g. through an @Bean method registered by ConfigurationClassPostProcessor)
-		// 检测LoadTimeWeaver并准备编织，如果在此期间发现
+		/*
+		 * 检测LoadTimeWeaver并准备编织，如果在此期间发现；
+		 * 在这里又检查一遍，是因为通过@EnableLoadTimeWeaving注解标记的配置类实在上面处理BeanFactoryPostProcessors是解析注册的。
+		 */
 		if (!NativeDetector.inNativeImage() && beanFactory.getTempClassLoader() == null && beanFactory.containsBean(LOAD_TIME_WEAVER_BEAN_NAME)) {
 			beanFactory.addBeanPostProcessor(new LoadTimeWeaverAwareProcessor(beanFactory));
 			beanFactory.setTempClassLoader(new ContextTypeMatchClassLoader(beanFactory.getBeanClassLoader()));

@@ -20,6 +20,23 @@ import org.springframework.beans.BeansException;
 import org.springframework.lang.Nullable;
 
 /**
+ * <p>允许自定义修改新bean实例的工厂钩子 ——— 例如，检查标记接口或用代理包装bean。</p>
+ *
+ * <p>通常，通过标记接口或类似操作填充bean的后处理器将实现postProcessBeforeInitialization方法，而
+ * 用代理包装bean的后处理器通常将实现postProcessAfterInitialization方法。</p>
+ *
+ * <h3>Registration</h3>
+ * <p>ApplicationContext能够在其bean定义中自动检测BeanPostProcessor beans，并将
+ * 这些后处理器应用于随后创建的任何bean。一个普通的BeanFactory允许以编程的方式注册后处理器，将它们
+ * 应用在通过该bean工厂创建的bean上。
+ * </p>
+ *
+ * <h3>Ordering</h3>
+ * <p>在ApplicationContext中自动检测到的BeanPostProcessor beans将根据PriorityOrdered和Ordered语义进行
+ * 排序。相反，以编程方式向BeanFactory注册的BeanPostProcessor beans将按照注册顺序应用。对于以编程方式注册
+ * 的后处理器，通过实现PriorityOrdered和Ordered接口表达的任何语义都将被忽略。此外，BeanPostProcessor beans
+ * 不考虑@Order注释。</p>
+ *
  * Factory hook that allows for custom modification of new bean instances &mdash;
  * for example, checking for marker interfaces or wrapping beans with proxies.
  *
@@ -58,6 +75,10 @@ import org.springframework.lang.Nullable;
 public interface BeanPostProcessor {
 
 	/**
+	 * <p>对于给定一个新bean实例，在任何初始化方法（例如InitializingBean的afterPropertiesSet方法或自定以的init-method）
+	 * 回调之前，应用BeanPostProcessor的此方法。bean已经用属性值填充了。返回的bean实例可能是原始bean的包装器。</p>
+	 * <p>默认实现按原样返回给定bean。</p>
+	 *
 	 * Apply this {@code BeanPostProcessor} to the given new bean instance <i>before</i> any bean
 	 * initialization callbacks (like InitializingBean's {@code afterPropertiesSet}
 	 * or a custom init-method). The bean will already be populated with property values.
@@ -76,6 +97,14 @@ public interface BeanPostProcessor {
 	}
 
 	/**
+	 * <p>对于给定一个新bean实例，在任何初始化方法（例如InitializingBean的afterPropertiesSet方法或自定以的init-method）
+	 * 	回调之后，应用BeanPostProcessor的此方法。bean已经用属性值填充了。返回的bean实例可能是原始bean的包装器。</p>
+	 * 	<p>对于FactoryBean，将被FactoryBean实例和通过FactoryBean创建的对象调用此回调方法（从Spring2.0开始）。后处理器
+	 * 	可以通过相应的bean instanceof FactoryBean检查bean实例，来决定是应用于FactoryBean或它创建的对象，或者两者都用。</p>
+	 * 	<p>与所有其他BeanPostProcessor回调不同，通过InstantiationAwareBeanPostProcessor的postProcessBeforeInstantiation方法
+	 * 	短路实例化bean后也会触发此方法的回调。</p>
+	 * <p>默认实现按原样返回给定bean。</p>
+	 *
 	 * Apply this {@code BeanPostProcessor} to the given new bean instance <i>after</i> any bean
 	 * initialization callbacks (like InitializingBean's {@code afterPropertiesSet}
 	 * or a custom init-method). The bean will already be populated with property values.

@@ -26,6 +26,8 @@ import org.springframework.core.SmartClassLoader;
 import org.springframework.lang.Nullable;
 
 /**
+ * <p>BeanPostProcessor实现的基类，它将Spring AOP Advisor应用到特定的bean。</p>
+ *
  * Base class for {@link BeanPostProcessor} implementations that apply a
  * Spring AOP {@link Advisor} to specific beans.
  *

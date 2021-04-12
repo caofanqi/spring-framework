@@ -22,13 +22,20 @@ import org.springframework.beans.factory.support.BeanNameGenerator;
 import org.springframework.core.type.AnnotationMetadata;
 
 /**
+ * <p>在处理@Configuration类时，由注册额外bean definitions的类型实现的接口。在bean定义
+ * 级（与@Bean方法/实例级别相反）别进行操作时非常有用。</p>
+ *
  * Interface to be implemented by types that register additional bean definitions when
  * processing @{@link Configuration} classes. Useful when operating at the bean definition
  * level (as opposed to {@code @Bean} method/instance level) is desired or necessary.
  *
+ * <p>与@Configuration和ImportSelector一起，这种类型的类可以提供给@Import注释(也可以从ImportSelector返回)</p>
+ *
  * <p>Along with {@code @Configuration} and {@link ImportSelector}, classes of this type
  * may be provided to the @{@link Import} annotation (or may also be returned from an
  * {@code ImportSelector}).
+ *
+ * <p>ImportBeanDefinitionRegistrar可以实现以下任何Aware接口，并且在registerBeanDefinitions之前调用它们各自的方法：</p>
  *
  * <p>An {@link ImportBeanDefinitionRegistrar} may implement any of the following
  * {@link org.springframework.beans.factory.Aware Aware} interfaces, and their respective
@@ -39,6 +46,8 @@ import org.springframework.core.type.AnnotationMetadata;
  * <li>{@link org.springframework.beans.factory.BeanClassLoaderAware BeanClassLoaderAware}
  * <li>{@link org.springframework.context.ResourceLoaderAware ResourceLoaderAware}
  * </ul>
+ *
+ * <p>另外，该类也可以提供一个具有以下一个或多个受支持的形参类型的构造函数:</p>
  *
  * <p>Alternatively, the class may provide a single constructor with one or more of
  * the following supported parameter types:
@@ -58,9 +67,13 @@ import org.springframework.core.type.AnnotationMetadata;
  * @see ImportSelector
  * @see Configuration
  */
-public interface ImportBeanDefinitionRegistrar {
+public interface  ImportBeanDefinitionRegistrar {
 
 	/**
+	 * <p>根据导入@Configuration类的给定注释元数据，根据需要注册bean定义。</p>
+	 * <p>请注意，由于与@Configuration class处理相关的生命周期限制，BeanDefinitionRegistryPostProcessor类型可能未在此处注册。</p>
+	 * <p>默认实现委托给{@link #registerBeanDefinitions(AnnotationMetadata, BeanDefinitionRegistry)}。</p>
+	 *
 	 * Register bean definitions as necessary based on the given annotation metadata of
 	 * the importing {@code @Configuration} class.
 	 * <p>Note that {@link BeanDefinitionRegistryPostProcessor} types may <em>not</em> be
@@ -87,6 +100,10 @@ public interface ImportBeanDefinitionRegistrar {
 	}
 
 	/**
+	 * <p>根据导入@Configuration类的给定注释元数据，根据需要注册bean定义。</p>
+	 * <p>请注意，由于与@Configuration class处理相关的生命周期限制，BeanDefinitionRegistryPostProcessor类型可能未在此处注册。</p>
+	 * <p>默认实现为空。</p>
+	 *
 	 * Register bean definitions as necessary based on the given annotation metadata of
 	 * the importing {@code @Configuration} class.
 	 * <p>Note that {@link BeanDefinitionRegistryPostProcessor} types may <em>not</em> be

@@ -17,8 +17,10 @@
 package org.springframework.aop;
 
 /**
+ * <p>throws advice的标记接口。</p>
  * Tag interface for throws advice.
  *
+ * <p>这个接口上没有任何方法，因为方法是由反射调用的。实现类必须实现这种形式的方法:</p>
  * <p>There are not any methods on this interface, as methods are invoked by
  * reflection. Implementing classes must implement methods of the form:
  *
@@ -31,9 +33,13 @@ package org.springframework.aop;
  * <pre class="code">public void afterThrowing(Method method, Object[] args, Object target, Exception ex)</pre>
  * <pre class="code">public void afterThrowing(Method method, Object[] args, Object target, ServletException ex)</pre>
  *
+ * <p>前三个参数是可选的，只有在我们想要进一步了解连接点时才有用，就像在AspectJ中after-throwing advice一样。</p>
  * The first three arguments are optional, and only useful if we want further
  * information about the joinpoint, as in AspectJ <b>after-throwing</b> advice.
  *
+ * <p>注意:如果throw -advice方法自己抛出异常，它会覆盖原来的异常(也就是改变抛出给用户的异常)。
+ * 覆盖异常通常是一个RuntimeException;这与任何方法签名兼容。但是，如果throw -advice方法抛出一个检查过的异常，
+ * 它就必须与目标方法声明的异常相匹配，因此在某种程度上与特定的目标方法签名相耦合。不要抛出与目标方法签名不兼容的未声明的检查异常!</p>
  * <p><b>Note:</b> If a throws-advice method throws an exception itself, it will
  * override the original exception (i.e. change the exception thrown to the user).
  * The overriding exception will typically be a RuntimeException; this is compatible

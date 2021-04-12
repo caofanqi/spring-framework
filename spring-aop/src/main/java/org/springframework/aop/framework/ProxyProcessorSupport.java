@@ -28,6 +28,7 @@ import org.springframework.util.ClassUtils;
 import org.springframework.util.ObjectUtils;
 
 /**
+ * <p>具有代理处理器通用功能的基类，特别是类加载器管理和evaluateProxyInterfaces算法。</p>
  * Base class with common functionality for proxy processors, in particular
  * ClassLoader management and the {@link #evaluateProxyInterfaces} algorithm.
  *
@@ -94,6 +95,10 @@ public class ProxyProcessorSupport extends ProxyConfig implements Ordered, BeanC
 
 
 	/**
+	 * <p>检查给定bean类上的接口，并将它们应用到ProxyFactory(如果合适的话)。</p>
+	 * <p>调用{@link #isConfigurationCallbackInterface}和{@link #isInternalLanguageInterface}来筛选合理的代理接口，
+	 * 否则回退到目标类代理。</p>
+	 *
 	 * Check the interfaces on the given bean class and apply them to the {@link ProxyFactory},
 	 * if appropriate.
 	 * <p>Calls {@link #isConfigurationCallbackInterface} and {@link #isInternalLanguageInterface}
@@ -113,6 +118,7 @@ public class ProxyProcessorSupport extends ProxyConfig implements Ordered, BeanC
 		}
 		if (hasReasonableProxyInterface) {
 			// Must allow for introductions; can't just set interfaces to the target's interfaces only.
+			// 必须允许introductions;不能仅仅将接口设置为目标的接口。
 			for (Class<?> ifc : targetInterfaces) {
 				proxyFactory.addInterface(ifc);
 			}
@@ -123,6 +129,9 @@ public class ProxyProcessorSupport extends ProxyConfig implements Ordered, BeanC
 	}
 
 	/**
+	 * <p>确定给定的接口是否只是一个容器回调，因此不能被认为是一个合理的代理接口。</p>
+	 * <p>如果没有为给定的bean找到合理的代理接口，它将被代理为其完整的目标类(假设这是用户的意图)。</p>
+	 *
 	 * Determine whether the given interface is just a container callback and
 	 * therefore not to be considered as a reasonable proxy interface.
 	 * <p>If no reasonable proxy interface is found for a given bean, it will get

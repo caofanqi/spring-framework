@@ -137,7 +137,7 @@ public abstract class AopConfigUtils {
 
 		/*
 		 * 没注册过，注册一个beanName为org.springframework.aop.config.internalAutoProxyCreator,
-		 * class 为AnnotationAwareAspectJAutoProxyCreator 的BeanDefinition
+		 * 类型为AnnotationAwareAspectJAutoProxyCreator 的BeanDefinition
 		 */
 		RootBeanDefinition beanDefinition = new RootBeanDefinition(cls);
 		beanDefinition.setSource(source);

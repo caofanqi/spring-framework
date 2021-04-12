@@ -35,6 +35,7 @@ import org.springframework.aop.framework.adapter.GlobalAdvisorAdapterRegistry;
 import org.springframework.lang.Nullable;
 
 /**
+ * <p>给定Advised对象，为方法确定advice链的一种简单但确定的方法。总是重新构建每个advice链;缓存可以由子类提供。</p>
  * A simple but definitive way of working out an advice chain for a Method,
  * given an {@link Advised} object. Always rebuilds each advice chain;
  * caching can be provided by subclasses.
@@ -54,8 +55,10 @@ public class DefaultAdvisorChainFactory implements AdvisorChainFactory, Serializ
 		// This is somewhat tricky... We have to process introductions first,
 		// but we need to preserve order in the ultimate list.
 		AdvisorAdapterRegistry registry = GlobalAdvisorAdapterRegistry.getInstance();
+		// 获取所有的Advisor
 		Advisor[] advisors = config.getAdvisors();
 		List<Object> interceptorList = new ArrayList<>(advisors.length);
+		// 确定目标对象的class
 		Class<?> actualClass = (targetClass != null ? targetClass : method.getDeclaringClass());
 		Boolean hasIntroductions = null;
 
@@ -64,6 +67,7 @@ public class DefaultAdvisorChainFactory implements AdvisorChainFactory, Serializ
 				// Add it conditionally.
 				PointcutAdvisor pointcutAdvisor = (PointcutAdvisor) advisor;
 				if (config.isPreFiltered() || pointcutAdvisor.getPointcut().getClassFilter().matches(actualClass)) {
+					// advisor适用于该class，获取方法匹配器
 					MethodMatcher mm = pointcutAdvisor.getPointcut().getMethodMatcher();
 					boolean match;
 					if (mm instanceof IntroductionAwareMethodMatcher) {
@@ -76,6 +80,7 @@ public class DefaultAdvisorChainFactory implements AdvisorChainFactory, Serializ
 						match = mm.matches(method, actualClass);
 					}
 					if (match) {
+						// 使用于该方法
 						MethodInterceptor[] interceptors = registry.getInterceptors(advisor);
 						if (mm.isRuntime()) {
 							// Creating a new object instance in the getInterceptors() method
@@ -85,6 +90,7 @@ public class DefaultAdvisorChainFactory implements AdvisorChainFactory, Serializ
 							}
 						}
 						else {
+							// 添加到连接器列表
 							interceptorList.addAll(Arrays.asList(interceptors));
 						}
 					}

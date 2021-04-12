@@ -546,7 +546,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		try {
 			// Give BeanPostProcessors a chance to return a proxy instead of the target bean instance.
 			// 让BeanPostProcessors有机会返回一个代理而不是目标bean实例。
-			// AOP功能就是在此处进行的扩展。
+			// AOP功能就是在此处进行的扩展（用户自定义了targetSource，在这里可以直接处理，并不需要要后续的默认实例化）。
 			Object bean = resolveBeforeInstantiation(beanName, mbdToUse);
 			if (bean != null) {
 				// 如果后置处理器，返回的不是null，直接返回。
@@ -681,7 +681,10 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			if (earlySingletonReference != null) {
 				// 说明有循环依赖
 				if (exposedObject == bean) {
-					// 如果执行完初始化方法的bean和未执行前的bean地址相等
+					/*
+					 * 如果执行完初始化方法的bean和未执行前的bean地址相等，这里需要使用提前单例引用；
+					 * 因为在循环引用的时候，会提前在getEarlyBeanReference方法中将对象包装。
+					 */
 					exposedObject = earlySingletonReference;
 				}
 				else if (!this.allowRawInjectionDespiteWrapping && hasDependentBean(beanName)) {
@@ -1199,7 +1202,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 				// 确定代理类型
 				Class<?> targetType = determineTargetType(beanName, mbd);
 				if (targetType != null) {
-					// 执行InstantiationAwareBeanPostProcessor类型后处理的before-initialization
+					// 执行InstantiationAwareBeanPostProcessor类型后处理的postProcessBeforeInstantiation
 					bean = applyBeanPostProcessorsBeforeInstantiation(targetType, beanName);
 					if (bean != null) {
 						// 不为null，执行所有后处理的after-initialization

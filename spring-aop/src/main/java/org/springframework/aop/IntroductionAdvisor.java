@@ -17,6 +17,10 @@
 package org.springframework.aop;
 
 /**
+ * <p>执行一个或多个AOP introductions的advisors的超接口。</p>
+ * <p>这个接口不能直接实现;子接口必须提供实现introduction的advice类型。</p>
+ * <p>Introduction是通过AOP advice实现额外的接口(不是由目标实现的)。</p>
+ *
  * Superinterface for advisors that perform one or more AOP <b>introductions</b>.
  *
  * <p>This interface cannot be implemented directly; subinterfaces must
@@ -32,6 +36,9 @@ package org.springframework.aop;
 public interface IntroductionAdvisor extends Advisor, IntroductionInfo {
 
 	/**
+	 * <p>返回决定本introduction应应用于哪些目标类的筛选器。</p>
+	 * <p>这表示切入点的类部分。注意，方法匹配对introduction没有意义。</p>
+	 *
 	 * Return the filter determining which target classes this introduction
 	 * should apply to.
 	 * <p>This represents the class part of a pointcut. Note that method
@@ -41,6 +48,8 @@ public interface IntroductionAdvisor extends Advisor, IntroductionInfo {
 	ClassFilter getClassFilter();
 
 	/**
+	 * <p>被advised的接口是否可以通过introduction advice实现?在添加IntroductionAdvisor之前调用。</p>
+	 *
 	 * Can the advised interfaces be implemented by the introduction advice?
 	 * Invoked before adding an IntroductionAdvisor.
 	 * @throws IllegalArgumentException if the advised interfaces can't be

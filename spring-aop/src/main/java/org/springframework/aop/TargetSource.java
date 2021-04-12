@@ -19,6 +19,10 @@ package org.springframework.aop;
 import org.springframework.lang.Nullable;
 
 /**
+ * <p>TargetSource用于获得AOP调用的当前“target”，如果没有around advice选择结束拦截器链本身，则通过反射调用该目标。</p>
+ * <p>如果TargetSource是“static”的，它将始终返回相同的target，从而允许在AOP框架中进行优化。动态target sources可以支持池、热交换等。</p>
+ * <p>应用程序开发人员通常不需要直接使用TargetSources：这是一个AOP框架接口。</p>
+ *
  * A {@code TargetSource} is used to obtain the current "target" of
  * an AOP invocation, which will be invoked via reflection if no around
  * advice chooses to end the interceptor chain itself.
@@ -36,6 +40,8 @@ import org.springframework.lang.Nullable;
 public interface TargetSource extends TargetClassAware {
 
 	/**
+	 * <p>返回此TargetSource返回的目标类型。</p>
+	 * <p>可以返回null，尽管TargetSource的某些用法可能只适用于预先确定的目标类。</p>
 	 * Return the type of targets returned by this {@link TargetSource}.
 	 * <p>Can return {@code null}, although certain usages of a {@code TargetSource}
 	 * might just work with a predetermined target class.
@@ -46,6 +52,8 @@ public interface TargetSource extends TargetClassAware {
 	Class<?> getTargetClass();
 
 	/**
+	 * <p>所有调用getTarget()都会返回相同的对象吗?</p>
+	 * <p>在这种情况下，就不需要调用releaseTarget(Object)， AOP框架可以缓存getTarget()的返回值。</p>
 	 * Will all calls to {@link #getTarget()} return the same object?
 	 * <p>In that case, there will be no need to invoke {@link #releaseTarget(Object)},
 	 * and the AOP framework can cache the return value of {@link #getTarget()}.
@@ -55,6 +63,7 @@ public interface TargetSource extends TargetClassAware {
 	boolean isStatic();
 
 	/**
+	 * <p>返回一个target实例。在AOP框架调用AOP方法调用的“target”之前立即调用。</p>
 	 * Return a target instance. Invoked immediately before the
 	 * AOP framework calls the "target" of an AOP method invocation.
 	 * @return the target object which contains the joinpoint,
@@ -65,6 +74,7 @@ public interface TargetSource extends TargetClassAware {
 	Object getTarget() throws Exception;
 
 	/**
+	 * <p>释放从getTarget()方法获得的给定目标对象(如果有的话)。</p>
 	 * Release the given target object obtained from the
 	 * {@link #getTarget()} method, if any.
 	 * @param target object obtained from a call to {@link #getTarget()}

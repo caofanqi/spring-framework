@@ -34,6 +34,8 @@ import org.springframework.aop.support.Pointcuts;
 import org.springframework.lang.Nullable;
 
 /**
+ * <p>AspectJPointcutAdvisor的内部实现。注意，对于每个目标方法，都会有一个advisor的实例。</p>
+ *
  * Internal implementation of AspectJPointcutAdvisor.
  * Note that there will be one instance of this advisor for each target method.
  *
@@ -108,8 +110,10 @@ final class InstantiationModelAwarePointcutAdvisorImpl
 		}
 		else {
 			// A singleton aspect.
+			// 单例aspect
 			this.pointcut = this.declaredPointcut;
 			this.lazy = false;
+			// 实例化Advice
 			this.instantiatedAdvice = instantiateAdvice(this.declaredPointcut);
 		}
 	}
@@ -146,6 +150,7 @@ final class InstantiationModelAwarePointcutAdvisorImpl
 	}
 
 	private Advice instantiateAdvice(AspectJExpressionPointcut pointcut) {
+		// 获取Advice
 		Advice advice = this.aspectJAdvisorFactory.getAdvice(this.aspectJAdviceMethod, pointcut,
 				this.aspectInstanceFactory, this.declarationOrder, this.aspectName);
 		return (advice != null ? advice : EMPTY_ADVICE);

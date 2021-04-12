@@ -21,6 +21,7 @@ import java.lang.reflect.Method;
 import org.springframework.lang.Nullable;
 
 /**
+ * <p>在返回之后，只在正常方法返回时调用通知，而不是在抛出异常时。这样的建议可以看到返回值，但不能更改它。</p>
  * After returning advice is invoked only on normal method return, not if an
  * exception is thrown. Such advice can see the return value, but cannot change it.
  *
@@ -31,6 +32,7 @@ import org.springframework.lang.Nullable;
 public interface AfterReturningAdvice extends AfterAdvice {
 
 	/**
+	 * <p>在一个给定的方法成功返回后回调。</p>
 	 * Callback after a given method successfully returned.
 	 * @param returnValue the value returned by the method, if any
 	 * @param method the method being invoked

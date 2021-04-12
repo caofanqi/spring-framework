@@ -64,6 +64,10 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 /**
+ * <p>Spring Pointcut实现，它使用AspectJ weaver计算pointcut表达式。</p>
+ * <p>pointcut表达式值是AspectJ表达式。这可以引用其他pointcuts并使用组合和其他操作。</p>
+ * <p>当然，由于Spring AOP是基于代理的模型处理，因此只支持方法执行pointcuts。</p>
+ *
  * Spring {@link org.springframework.aop.Pointcut} implementation
  * that uses the AspectJ weaver to evaluate a pointcut expression.
  *

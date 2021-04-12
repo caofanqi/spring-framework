@@ -21,6 +21,9 @@ import org.aopalliance.intercept.MethodInterceptor;
 import org.springframework.aop.Advisor;
 
 /**
+ * <p>Advisor适配器的注册表接口。</p>
+ * <p>这是一个SPI接口，不是由任何Spring用户实现的。</p>
+ *
  * Interface for registries of Advisor adapters.
  *
  * <p><i>This is an SPI interface, not to be implemented by any Spring user.</i>
@@ -31,6 +34,9 @@ import org.springframework.aop.Advisor;
 public interface AdvisorAdapterRegistry {
 
 	/**
+	 * <p>返回一个包装了给定advice的Advisor。</p>
+	 * <p>默认情况下至少应该支持:MethodInterceptor、MethodBeforeAdvice、AfterReturningAdvice、ThrowsAdvice</p>
+	 *
 	 * Return an {@link Advisor} wrapping the given advice.
 	 * <p>Should by default at least support
 	 * {@link org.aopalliance.intercept.MethodInterceptor},
@@ -46,6 +52,9 @@ public interface AdvisorAdapterRegistry {
 	Advisor wrap(Object advice) throws UnknownAdviceTypeException;
 
 	/**
+	 * <p>返回一个AOP Alliance MethodInterceptors数组，以允许在基于拦截的框架中使用给定的Advisor。</p>
+	 * <p>不要担心与Advisor相关的切入点，如果它是一个PointcutAdvisor:只返回一个拦截器。</p>
+	 *
 	 * Return an array of AOP Alliance MethodInterceptors to allow use of the
 	 * given Advisor in an interception-based framework.
 	 * <p>Don't worry about the pointcut associated with the {@link Advisor}, if it is
@@ -58,6 +67,8 @@ public interface AdvisorAdapterRegistry {
 	MethodInterceptor[] getInterceptors(Advisor advisor) throws UnknownAdviceTypeException;
 
 	/**
+	 * <p>注册给定的AdvisorAdapter。注意，没有必要为AOP联盟拦截器或Spring Advices注册适配器:这些必须由AdvisorAdapterRegistry实现自动识别。</p>
+	 *
 	 * Register the given {@link AdvisorAdapter}. Note that it is not necessary to register
 	 * adapters for an AOP Alliance Interceptors or Spring Advices: these must be
 	 * automatically recognized by an {@code AdvisorAdapterRegistry} implementation.

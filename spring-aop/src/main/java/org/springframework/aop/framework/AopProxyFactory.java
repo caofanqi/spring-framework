@@ -17,8 +17,19 @@
 package org.springframework.aop.framework;
 
 /**
+ * <p>接口，由工厂实现，这些工厂能够基于AdvisedSupport配置对象创建AOP代理。</p>
+ *
  * Interface to be implemented by factories that are able to create
  * AOP proxies based on {@link AdvisedSupport} configuration objects.
+ *
+ * <p>代理应遵守以下契约：</p>
+ * <ul>
+ * <li>它们应该实现配置指示的所有应该被代理的接口。
+ * <li>它们应该实现Advised接口。
+ * <li>它们应该实现equals方法来比较代理接口、advice和target。
+ * <li>如果所有的advisors和target都是可序列化的，那么它们应该是可序列化的。
+ * <li>如果advisors和target是线程安全的，那么它们应该是线程安全的。
+ * </ul>
  *
  * <p>Proxies should observe the following contract:
  * <ul>
@@ -33,6 +44,7 @@ package org.springframework.aop.framework;
  * are thread-safe.
  * </ul>
  *
+ * <p>代理可能允许也可能不允许对advice进行更改。如果它们不允许更改通知(例如，因为配置被冻结)，代理应该在尝试更改通知时抛出AopConfigException。</p>
  * <p>Proxies may or may not allow advice changes to be made.
  * If they do not permit advice changes (for example, because
  * the configuration was frozen) a proxy should throw an
@@ -44,6 +56,7 @@ package org.springframework.aop.framework;
 public interface AopProxyFactory {
 
 	/**
+	 * <p>为给定的AOP配置创建一个AopProxy。</p>
 	 * Create an {@link AopProxy} for the given AOP configuration.
 	 * @param config the AOP configuration in the form of an
 	 * AdvisedSupport object

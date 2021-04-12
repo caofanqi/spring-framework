@@ -20,6 +20,9 @@ import org.springframework.core.Ordered;
 import org.springframework.lang.Nullable;
 
 /**
+ * <p>为提供AspectJ aspect的实例而实现的接口。从Spring的bean工厂解耦。</p>
+ * <p>扩展Ordered接口，以表示链中底层aspect的order值。</p>
+ *
  * Interface implemented to provide an instance of an AspectJ aspect.
  * Decouples from Spring's bean factory.
  *
@@ -34,6 +37,7 @@ import org.springframework.lang.Nullable;
 public interface AspectInstanceFactory extends Ordered {
 
 	/**
+	 * <p>创建此工厂的aspect的实例。</p>
 	 * Create an instance of this factory's aspect.
 	 * @return the aspect instance (never {@code null})
 	 */

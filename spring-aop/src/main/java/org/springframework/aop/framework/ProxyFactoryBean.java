@@ -49,6 +49,22 @@ import org.springframework.util.ClassUtils;
 import org.springframework.util.ObjectUtils;
 
 /**
+ * <p>FactoryBean实现，基于Spring BeanFactory中的bean构建一个AOP代理。</p>
+ * <p>MethodInterceptors和Advisors由当前bean工厂中的bean名称列表标识，通过“interceptorNames”属性指定。
+ * 列表中的最后一项可以是目标bean或TargetSource的名称;然而，通常使用“targetName”/“target”/“targetSource”属性更可取。</p>
+ *
+ * <p>全局拦截器和advisors可以在工厂级别添加。指定的字符在拦截器列表中展开，列表中包含“xxx*”项，
+ * 将给定的前缀与bean名称(例如:“global*”将匹配“globalBean1”和“globalBean2”，“*”所有已定义的拦截器)。
+ * 如果匹配的拦截器实现了Ordered接口，则会根据它们返回的order值来应用它们。</p>
+ *
+ * <p>在提供代理接口时创建JDK代理，如果没有，则为实际的目标类创建CGLIB代理。
+ * 请注意，后者仅在目标类没有final方法时才有效，因为动态子类将在运行时创建。</p>
+ *
+ * <p>可以将从此工厂获得的代理强制转换为Advised，或者获取ProxyFactoryBean引用并以编程方式对其进行操作。
+ * 这对现有的独立原型引用不起作用。不过，它将适用于随后从工厂获得的原型。对拦截的更改将在单例（包括现有引用）上立即起作用。
+ * 但是，要更改接口或目标，必须从工厂获取新实例。这意味着从工厂获得的单例实例没有相同的对象标识。但是，它们有相同的拦截器和目标，
+ * 更改任何引用都会更改所有对象。</p>
+ *
  * {@link org.springframework.beans.factory.FactoryBean} implementation that builds an
  * AOP proxy based on beans in Spring {@link org.springframework.beans.factory.BeanFactory}.
  *

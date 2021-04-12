@@ -23,6 +23,13 @@ import org.springframework.beans.PropertyValues;
 import org.springframework.lang.Nullable;
 
 /**
+ * <p>BeanPostProcessor的子接口，它在实例化之前添加回调，在实例化之后，但在显示属性填充前或主动注入之前添加回调。</p>
+ *
+ * <p>通常用于抑制特定target beans的默认实例化，例如，使用特殊的TargetSources（池targets,延迟加载targets等等）创建代理，
+ * 或实现额外的注入策略，例如字段注入。 </p>
+ *
+ * <p>注：此接口为专用接口，主要用于框架内部使用。建议尽可能实现普通BeanPostProcessor接口。</p>
+ *
  * Subinterface of {@link BeanPostProcessor} that adds a before-instantiation callback,
  * and a callback after instantiation but before explicit properties are set or
  * autowiring occurs.
@@ -47,6 +54,13 @@ import org.springframework.lang.Nullable;
 public interface InstantiationAwareBeanPostProcessor extends BeanPostProcessor {
 
 	/**
+	 * <p>在目标bean实例化之前应用该方法，返回的对象可能是一个代理来代替目标bean，有效的抑制了目标bean的默认实例化。</p>
+	 * <p>如果此方法返回一个非null对象，创建bean的流程将被短路。应用的唯一进一步处理是配置BeanPostProcessors的
+	 * postProcessAfterInitialization方法回调。</p>
+	 * <p>这个回调将应用于bean定义及其bean class，以及factory-method定义，在这种情况下，返回的bean类型将在这里传递</p>
+	 * <p>后处理器可以扩展SmartInstantiationAwareBeanPostProcessor接口，以便预测它们将在这里返回的bean对象的类型。</p>
+	 * <p>默认实现返回null</p>
+	 *
 	 * Apply this BeanPostProcessor <i>before the target bean gets instantiated</i>.
 	 * The returned bean object may be a proxy to use instead of the target bean,
 	 * effectively suppressing default instantiation of the target bean.
@@ -77,8 +91,8 @@ public interface InstantiationAwareBeanPostProcessor extends BeanPostProcessor {
 
 	/**
 	 * <p>在实例化bean之后(通过构造函数或工厂方法)执行操作，但要在Spring属性填充(通过显式属性或自动装配)发生之前执行。</p>
-	 * <p>这是在Spring的自动装配开始之前，在给定bean实例上执行定制字段注入的理想回调。
-	 * 默认实现返回true。</p>
+	 * <p>这是在Spring的自动装配开始之前，在给定bean实例上执行定制字段注入的理想回调。</p>
+	 * <p>默认实现返回true。</p>
 	 *
 	 * Perform operations after the bean has been instantiated, via a constructor or factory method,
 	 * but before Spring property population (from explicit properties or autowiring) occurs.
@@ -99,6 +113,11 @@ public interface InstantiationAwareBeanPostProcessor extends BeanPostProcessor {
 	}
 
 	/**
+	 * <p>在工厂将给定属性值应用到给定bean之前，后处理属性，而不需要任何属性描述符。</p>
+	 * <p>如果提供了自定义的postProcessPropertyValues实现，该方法实现应该返回null（默认值），
+	 * 否则返回pvs。在这个接口的未来版本中（postProcessPropertyValues移除），默认实现将直接
+	 * 返回给定的pvs。 </p>
+	 *
 	 * Post-process the given property values before the factory applies them
 	 * to the given bean, without any need for property descriptors.
 	 * <p>Implementations should return {@code null} (the default) if they provide a custom
@@ -124,6 +143,12 @@ public interface InstantiationAwareBeanPostProcessor extends BeanPostProcessor {
 	}
 
 	/**
+	 * <p>注意：该方法以弃用，使用上面的postProcessProperties方法。</p>
+	 *
+	 * <p>在工厂将给定的属性值应用于给定的bean之前，对其进行后处理。允许检查是否满足了所有依赖项，例如基于bean属性设置器上的“Required”注释。</p>
+	 * <p>还允许替换要应用的属性值，通常是通过基于原始属性值创建新的MutablePropertyValues实例，添加或删除特定值。</p>
+	 * <p>默认实现按原样返回给定的pv。</p>
+	 *
 	 * Post-process the given property values before the factory applies them
 	 * to the given bean. Allows for checking whether all dependencies have been
 	 * satisfied, for example based on a "Required" annotation on bean property setters.

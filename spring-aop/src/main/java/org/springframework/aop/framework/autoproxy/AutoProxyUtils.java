@@ -102,6 +102,7 @@ public abstract class AutoProxyUtils {
 	}
 
 	/**
+	 * <p>如果可能的话，为指定的bean公开给定的目标类。</p>
 	 * Expose the given target class for the specified bean, if possible.
 	 * @param beanFactory the containing ConfigurableListableBeanFactory
 	 * @param beanName the name of the bean
@@ -117,6 +118,8 @@ public abstract class AutoProxyUtils {
 	}
 
 	/**
+	 * <p>判断给定的bean名称是否根据AutowireCapableBeanFactory.ORIGINAL_INSTANCE_SUFFIX指示“original instance”，跳过对它的任何代理尝试。</p>
+	 *
 	 * Determine whether the given bean name indicates an "original instance"
 	 * according to {@link AutowireCapableBeanFactory#ORIGINAL_INSTANCE_SUFFIX},
 	 * skipping any proxy attempts for it.

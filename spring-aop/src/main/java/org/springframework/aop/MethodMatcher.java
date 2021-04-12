@@ -19,6 +19,16 @@ package org.springframework.aop;
 import java.lang.reflect.Method;
 
 /**
+ * <p>Pointcut的一部分:检查目标方法是否符合advice的条件。</p>
+ * <p>MethodMatcher可以静态地计算，也可以在运行时(动态地)计算。静态匹配包括方法和(可能)方法属性。
+ * 动态匹配还使特定调用的参数可用，并将运行之前通知的任何效果应用到连接点。</p>
+ * <p>如果实现从它的isRuntime()方法返回false，则可以静态执行求值，并且对于该方法的所有调用，
+ * 无论它们的参数是什么，结果都是相同的。这意味着如果isRuntime()方法返回false，
+ * 那么将永远不会调用3个参数的matches(Method, Class, Object[])方法。</p>
+ * <p>如果一个实现从它的2-arg matches(Method，Class)方法和它的isRuntime()方法返回true，
+ * 那么3-arg matches(Method，Class，Object[])方法将在每次执行相关通知之前立即被调用，以决定是否应该运行通知。
+ * 所有以前的通知(例如拦截器链中的早期拦截器)都将运行，因此它们在参数或ThreadLocal状态中产生的任何状态更改都将在计算时可用。</p>
+ *
  * Part of a {@link Pointcut}: Checks whether the target method is eligible for advice.
  *
  * <p>A MethodMatcher may be evaluated <b>statically</b> or at <b>runtime</b> (dynamically).
@@ -53,6 +63,7 @@ import java.lang.reflect.Method;
 public interface MethodMatcher {
 
 	/**
+	 * <p>静态检查给定的方法是否匹配。</p>
 	 * Perform static checking whether the given method matches.
 	 * <p>If this returns {@code false} or if the {@link #isRuntime()}
 	 * method returns {@code false}, no runtime check (i.e. no
@@ -65,6 +76,9 @@ public interface MethodMatcher {
 	boolean matches(Method method, Class<?> targetClass);
 
 	/**
+	 * <p>这个MethodMatcher是动态的吗?也就是说，即使2参数的matches方法返回true，
+	 * 在运行时也必须对matches(Method，Class，Object[])方法进行最终调用吗?</p>
+	 *
 	 * Is this MethodMatcher dynamic, that is, must a final call be made on the
 	 * {@link #matches(java.lang.reflect.Method, Class, Object[])} method at
 	 * runtime even if the 2-arg matches method returns {@code true}?
@@ -77,6 +91,7 @@ public interface MethodMatcher {
 	boolean isRuntime();
 
 	/**
+	 * <p>检查是否有这个方法的运行时(动态)匹配，它必须是静态匹配的。</p>
 	 * Check whether there a runtime (dynamic) match for this method,
 	 * which must have matched statically.
 	 * <p>This method is invoked only if the 2-arg matches method returns

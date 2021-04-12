@@ -19,6 +19,9 @@ package org.springframework.aop.framework;
 import org.springframework.lang.Nullable;
 
 /**
+ * <p>一个已配置的AOP代理的委托接口，允许创建实际的代理对象。</p>
+ * <p>JDK动态代理和CGLIB代理都可以使用开箱即用的实现，就像DefaultAopProxyFactory应用的那样。</p>
+ *
  * Delegate interface for a configured AOP proxy, allowing for the creation
  * of actual proxy objects.
  *
@@ -32,6 +35,9 @@ import org.springframework.lang.Nullable;
 public interface AopProxy {
 
 	/**
+	 * <p>创建一个新的代理对象。</p>
+	 * <p>使用AopProxy的默认类装入器(如果创建代理需要的话):通常是线程上下文类装入器。</p>
+	 *
 	 * Create a new proxy object.
 	 * <p>Uses the AopProxy's default class loader (if necessary for proxy creation):
 	 * usually, the thread context class loader.

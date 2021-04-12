@@ -27,6 +27,8 @@ import org.springframework.aop.framework.AopConfigException;
 import org.springframework.lang.Nullable;
 
 /**
+ * <p>用于工厂的接口，这些工厂可以从用AspectJ注释语法注释的类创建Spring AOP Advisors。</p>
+ *
  * Interface for factories that can create Spring AOP Advisors from classes
  * annotated with AspectJ annotation syntax.
  *
@@ -52,6 +54,7 @@ public interface AspectJAdvisorFactory {
 	boolean isAspect(Class<?> clazz);
 
 	/**
+	 * <p>给定的类是一个有效的AspectJ方面类吗?</p>
 	 * Is the given class a valid AspectJ aspect class?
 	 * @param aspectClass the supposed AspectJ annotation-style class to validate
 	 * @throws AopConfigException if the class is an invalid aspect
@@ -62,6 +65,7 @@ public interface AspectJAdvisorFactory {
 	void validate(Class<?> aspectClass) throws AopConfigException;
 
 	/**
+	 * <p>在指定的aspect实例上为所有带注释的At-AspectJ方法构建Spring AOP Advisors。</p>
 	 * Build Spring AOP Advisors for all annotated At-AspectJ methods
 	 * on the specified aspect instance.
 	 * @param aspectInstanceFactory the aspect instance factory
@@ -85,6 +89,8 @@ public interface AspectJAdvisorFactory {
 			int declarationOrder, String aspectName);
 
 	/**
+	 * <p>为给定的AspectJ advice方法构建一个Spring AOP Advice。</p>
+	 *
 	 * Build a Spring AOP Advice for the given AspectJ advice method.
 	 * @param candidateAdviceMethod the candidate advice method
 	 * @param expressionPointcut the AspectJ expression pointcut

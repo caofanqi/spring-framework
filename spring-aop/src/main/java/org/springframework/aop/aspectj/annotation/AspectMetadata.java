@@ -32,6 +32,9 @@ import org.springframework.aop.framework.AopConfigException;
 import org.springframework.aop.support.ComposablePointcut;
 
 /**
+ * <p>用于AspectJ aspect类的元数据，以及用于per子句的额外Spring AOP切入点。</p>
+ * <p>使用AspectJ 5 AJType反射API，使我们能够使用不同的AspectJ实例化模型，如“singleton”、“pertarget”和“perthis”。</p>
+ *
  * Metadata for an AspectJ aspect class, with an additional Spring AOP pointcut
  * for the per clause.
  *
@@ -179,6 +182,7 @@ public class AspectMetadata implements Serializable {
 	}
 
 	/**
+	 * <p>返回方面是否需要延迟实例化。</p>
 	 * Return whether the aspect needs to be lazily instantiated.
 	 */
 	public boolean isLazilyInstantiated() {

@@ -22,6 +22,10 @@ import org.springframework.beans.BeansException;
 import org.springframework.lang.Nullable;
 
 /**
+ * <p>InstantiationAwareBeanPostProcessor接口的扩展，添加一个用于预测已处理bean的最终类型的回调。</p>
+ *
+ * <p><b>注:</b>此接口为专用接口，主要用于框架内部使用。一般来说，建议尽可能实现普通BeanPostProcessor接口。</p>
+ *
  * Extension of the {@link InstantiationAwareBeanPostProcessor} interface,
  * adding a callback for predicting the eventual type of a processed bean.
  *
@@ -38,6 +42,9 @@ import org.springframework.lang.Nullable;
 public interface SmartInstantiationAwareBeanPostProcessor extends InstantiationAwareBeanPostProcessor {
 
 	/**
+	 * <p>预测这个处理器的postProcessBeforeInstantiation回调最终返回的bean的类型</p>
+	 * <p>该实现默认返回null。</p>
+	 *
 	 * Predict the type of the bean to be eventually returned from this
 	 * processor's {@link #postProcessBeforeInstantiation} callback.
 	 * <p>The default implementation returns {@code null}.
@@ -52,6 +59,9 @@ public interface SmartInstantiationAwareBeanPostProcessor extends InstantiationA
 	}
 
 	/**
+	 * <p>确定要用于给定bean的候选构造函数。</p>
+	 * <p>默认实现返回null。</p>
+	 *
 	 * Determine the candidate constructors to use for the given bean.
 	 * <p>The default implementation returns {@code null}.
 	 * @param beanClass the raw class of the bean (never {@code null})
@@ -67,6 +77,13 @@ public interface SmartInstantiationAwareBeanPostProcessor extends InstantiationA
 	}
 
 	/**
+	 * <p>获取对指定bean的早期访问的引用，通常用于解析循环引用。</p>
+	 * <p>这个回调使后处理器有机会尽早暴露包装器————也就是说在目标bean完全初始化之前。
+	 * 暴露的对象应该等价于postProcessBeforeInitialization/postProcessAfterInitialization在其他情况下暴露的对象。
+	 * 注意：该方法返回的对象将被用作bean引用，除非后处理器从所述后处理回调返回不同的包装器。换句话说：这些后处理回调可能最终暴露
+	 * 相同的引用或者从这些后续的回调返回原始的bean实例（如果该方法已经构建了受影响bean的包装器，那么默认情况下，它将暴露为最终bean引用）</p>
+	 * <p>默认实现按原样返回给定bean。</p>
+	 *
 	 * Obtain a reference for early access to the specified bean,
 	 * typically for the purpose of resolving a circular reference.
 	 * <p>This callback gives post-processors a chance to expose a wrapper

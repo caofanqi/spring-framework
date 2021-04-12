@@ -120,6 +120,7 @@ class ConfigurationClassBeanDefinitionReader {
 
 
 	/**
+	 * <p>读取configurationModel，根据其内容将bean definitions注册到注册中心</p>
 	 * Read {@code configurationModel}, registering bean definitions
 	 * with the registry based on its contents.
 	 */
@@ -131,6 +132,7 @@ class ConfigurationClassBeanDefinitionReader {
 	}
 
 	/**
+	 * <p>读取特定的ConfigurationClass，为类本身及其所有@Bean方法注册bean定义。</p>
 	 * Read a particular {@link ConfigurationClass}, registering bean definitions
 	 * for the class itself and all of its {@link Bean} methods.
 	 */
@@ -149,11 +151,14 @@ class ConfigurationClassBeanDefinitionReader {
 		if (configClass.isImported()) {
 			registerBeanDefinitionForImportedConfigurationClass(configClass);
 		}
+		// 注册@Bean方法的bean定义
 		for (BeanMethod beanMethod : configClass.getBeanMethods()) {
 			loadBeanDefinitionsForBeanMethod(beanMethod);
 		}
 
+		// 加载ImportedResource引入的bean定义
 		loadBeanDefinitionsFromImportedResources(configClass.getImportedResources());
+		// 加载ImportBeanDefinitionRegistrar需要注册的bean定义
 		loadBeanDefinitionsFromRegistrars(configClass.getImportBeanDefinitionRegistrars());
 	}
 
@@ -465,6 +470,7 @@ class ConfigurationClassBeanDefinitionReader {
 
 
 	/**
+	 * <p>评估@Conditional注释，跟踪结果并考虑 'imported by'</p>
 	 * Evaluate {@code @Conditional} annotations, tracking results and taking into
 	 * account 'imported by'.
 	 */

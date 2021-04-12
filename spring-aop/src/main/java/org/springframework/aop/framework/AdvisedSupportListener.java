@@ -17,6 +17,7 @@
 package org.springframework.aop.framework;
 
 /**
+ * <p>在ProxyCreatorSupport对象上注册的侦听器允许在激活和更改通知时接收回调。</p>
  * Listener to be registered on {@link ProxyCreatorSupport} objects
  * Allows for receiving callbacks on activation and change of advice.
  *

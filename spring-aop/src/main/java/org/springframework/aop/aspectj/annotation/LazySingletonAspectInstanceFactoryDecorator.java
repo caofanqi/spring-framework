@@ -22,6 +22,7 @@ import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 
 /**
+ * <p>修饰器使MetadataAwareAspectInstanceFactory只实例化一次。</p>
  * Decorator to cause a {@link MetadataAwareAspectInstanceFactory} to instantiate only once.
  *
  * @author Rod Johnson

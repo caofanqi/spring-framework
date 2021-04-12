@@ -20,6 +20,9 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
+ * <p>在接口到达目标时拦截接口上的调用。它们嵌套在目标的“顶部”。</p>
+ * <p>用户应该实现invoke(MethodInvocation)方法来修改原始行为。下面的类实现了一个跟踪拦截器(跟踪被拦截方法上的所有调用):</p>
+ *
  * Intercepts calls on an interface on its way to the target. These
  * are nested "on top" of the target.
  *
@@ -46,6 +49,8 @@ import javax.annotation.Nullable;
 public interface MethodInterceptor extends Interceptor {
 
 	/**
+	 * <p>实现此方法在调用之前和之后执行额外的处理。优雅的实现当然会调用Joinpoint.proceed()。</p>
+	 *
 	 * Implement this method to perform extra treatments before and
 	 * after the invocation. Polite implementations would certainly
 	 * like to invoke {@link Joinpoint#proceed()}.

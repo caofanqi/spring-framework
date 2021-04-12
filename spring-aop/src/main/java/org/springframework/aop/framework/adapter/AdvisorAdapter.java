@@ -22,6 +22,10 @@ import org.aopalliance.intercept.MethodInterceptor;
 import org.springframework.aop.Advisor;
 
 /**
+ * <p>接口，允许对Spring AOP框架进行扩展，从而允许处理新的Advisors和Advice类型。</p>
+ * <p>实现对象可以从自定义的advice类型创建AOP联盟拦截器，使这些advice类型能够在Spring AOP框架中使用，该框架在底层使用拦截。</p>
+ * <p>大多数Spring用户不需要实现这个接口;只有在需要向Spring引入更多Advisor或Advice类型时才这样做。</p>
+ *
  * Interface allowing extension to the Spring AOP framework to allow
  * handling of new Advisors and Advice types.
  *
@@ -37,6 +41,8 @@ import org.springframework.aop.Advisor;
 public interface AdvisorAdapter {
 
 	/**
+	 * <p>这个适配器是否支持这个advice对象?用包含这个advice作为参数的Advisor调用getInterceptors方法是有效的吗?</p>
+	 *
 	 * Does this adapter understand this advice object? Is it valid to
 	 * invoke the {@code getInterceptors} method with an Advisor that
 	 * contains this advice as an argument?
@@ -48,6 +54,9 @@ public interface AdvisorAdapter {
 	boolean supportsAdvice(Advice advice);
 
 	/**
+	 * <p>返回一个AOP Alliance MethodInterceptor，向基于拦截的AOP框架公开给定advice的行为。</p>
+	 * <p>不要担心Advisor中包含的任何切入点;AOP框架将负责检查切入点。</p>
+	 *
 	 * Return an AOP Alliance MethodInterceptor exposing the behavior of
 	 * the given advice to an interception-based AOP framework.
 	 * <p>Don't worry about any Pointcut contained in the Advisor;

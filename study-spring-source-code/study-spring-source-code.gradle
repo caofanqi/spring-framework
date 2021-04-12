@@ -5,4 +5,7 @@ dependencies {
     compile(project(":spring-beans"))
     compile(project(":spring-aop"))
     compile(project(":spring-context"))
+    implementation group: 'org.springframework', name: 'spring-aspects', version: '5.3.5'
+    compile(project(":spring-instrument"))
+    compile(project(":spring-tx"))
 }

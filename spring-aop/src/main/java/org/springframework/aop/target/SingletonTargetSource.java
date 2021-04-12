@@ -23,6 +23,10 @@ import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 
 /**
+ * <p>保存给定对象的TargetSource接口的实现。这是TargetSource接口的默认实现，由Spring AOP框架使用。
+ * 通常不需要在应用程序代码中创建该类的对象。</p>
+ * <p>这个类是可序列化的。然而，SingletonTargetSource的实际可序列化性将取决于target是否可序列化。</p>
+ *
  * Implementation of the {@link org.springframework.aop.TargetSource} interface
  * that holds a given object. This is the default implementation of the TargetSource
  * interface, as used by the Spring AOP framework. There is usually no need to
@@ -77,6 +81,7 @@ public class SingletonTargetSource implements TargetSource, Serializable {
 
 
 	/**
+	 * <p>如果两个调用器拦截器具有相同的target，或者目标或目标相等，则它们相等。</p>
 	 * Two invoker interceptors are equal if they have the same target or if the
 	 * targets or the targets are equal.
 	 */

@@ -48,6 +48,8 @@ public final class ExposeInvocationInterceptor implements MethodInterceptor, Pri
 	public static final ExposeInvocationInterceptor INSTANCE = new ExposeInvocationInterceptor();
 
 	/**
+	 * <p>该类的单例advisor。在使用Spring AOP时，请有限使用INSTANCE，因为这样可以避免创建新的Advisor来包装实例。</p>
+	 *
 	 * Singleton advisor for this class. Use in preference to INSTANCE when using
 	 * Spring AOP, as it prevents the need to create a new Advisor to wrap the instance.
 	 */

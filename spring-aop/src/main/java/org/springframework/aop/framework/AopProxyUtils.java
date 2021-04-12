@@ -89,6 +89,8 @@ public abstract class AopProxyUtils {
 	}
 
 	/**
+	 * <p>为给定的AOP配置确定代理的完整接口集。</p>
+	 * <p>这将总是添加Advised接口，除非AdvisedSupport的"opaque"标志打开。总是添加SpringProxy标记接口。</p>
 	 * Determine the complete set of interfaces to proxy for the given AOP configuration.
 	 * <p>This will always add the {@link Advised} interface unless the AdvisedSupport's
 	 * {@link AdvisedSupport#setOpaque "opaque"} flag is on. Always adds the

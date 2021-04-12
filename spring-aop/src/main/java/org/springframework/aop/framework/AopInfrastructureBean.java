@@ -17,6 +17,8 @@
 package org.springframework.aop.framework;
 
 /**
+ * <p>指示作为Spring AOP基础结构一部分的bean的标记接口。特别地，这意味着任何这样的bean都不受自动代理的约束，即使切入点是匹配的。</p>
+ *
  * Marker interface that indicates a bean that is part of Spring's
  * AOP infrastructure. In particular, this implies that any such bean
  * is not subject to auto-proxying, even if a pointcut would match.

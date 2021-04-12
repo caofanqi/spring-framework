@@ -34,6 +34,8 @@ import org.springframework.core.Ordered;
 import org.springframework.util.ClassUtils;
 
 /**
+ * <p>AbstractAdvisorAutoProxyCreator子类，该子类公开AspectJ的调用上下文，并在多个advice来自同一aspect时理解AspectJ的通知优先规则。</p>
+ *
  * {@link org.springframework.aop.framework.autoproxy.AbstractAdvisorAutoProxyCreator}
  * subclass that exposes AspectJ's invocation context and understands AspectJ's rules
  * for advice precedence when multiple pieces of advice come from the same aspect.
@@ -86,6 +88,9 @@ public class AspectJAwareAdvisorAutoProxyCreator extends AbstractAdvisorAutoProx
 	}
 
 	/**
+	 * <p>在通知链的开头添加一个ExposeInvocationInterceptor</p>
+	 * <p>当使用AspectJ切入点表达式和使用AspectJ风格的通知时，需要这个额外的通知。</p>
+	 *
 	 * Add an {@link ExposeInvocationInterceptor} to the beginning of the advice chain.
 	 * <p>This additional advice is needed when using AspectJ pointcut expressions
 	 * and when using AspectJ-style advice.
@@ -110,6 +115,7 @@ public class AspectJAwareAdvisorAutoProxyCreator extends AbstractAdvisorAutoProx
 
 
 	/**
+	 * <p>实现了AspectJ的PartialOrder。用于定义部分排序的PartialComparable接口。</p>
 	 * Implements AspectJ's {@link PartialComparable} interface for defining partial orderings.
 	 */
 	private static class PartiallyComparableAdvisorHolder implements PartialComparable {

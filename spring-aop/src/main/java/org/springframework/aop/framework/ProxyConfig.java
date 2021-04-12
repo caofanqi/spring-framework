@@ -21,6 +21,7 @@ import java.io.Serializable;
 import org.springframework.util.Assert;
 
 /**
+ * <p>创建代理时使用的配置的便利超类，以确保所有代理创建者具有一致的属性。</p>
  * Convenience superclass for configuration used in creating proxies,
  * to ensure that all proxy creators have consistent properties.
  *
@@ -32,7 +33,6 @@ public class ProxyConfig implements Serializable {
 
 	/** use serialVersionUID from Spring 1.2 for interoperability. */
 	private static final long serialVersionUID = -8409359707199703185L;
-
 
 	private boolean proxyTargetClass = false;
 
@@ -69,6 +69,9 @@ public class ProxyConfig implements Serializable {
 	}
 
 	/**
+	 * <p>设置代理是否应该执行主动优化。“积极优化”的确切含义在不同代理之间会有所不同，但通常会有一些权衡。默认设置是“false”。</p>
+	 * <p>例如，优化通常意味着在创建代理之后通知更改不会生效。因此，在默认情况下，优化是禁用的。
+	 * 如果其他设置妨碍了优化，那么优化值“true”可能会被忽略:例如，如果“exposeProxy”设置为“true”，这与优化不兼容。</p>
 	 * Set whether proxies should perform aggressive optimizations.
 	 * The exact meaning of "aggressive optimizations" will differ
 	 * between proxies, but there is usually some tradeoff.
@@ -84,6 +87,7 @@ public class ProxyConfig implements Serializable {
 	}
 
 	/**
+	 * <p>返回代理是否应该执行主动优化。</p>
 	 * Return whether proxies should perform aggressive optimizations.
 	 */
 	public boolean isOptimize() {
@@ -91,6 +95,8 @@ public class ProxyConfig implements Serializable {
 	}
 
 	/**
+	 * <p>设置是否应阻止此配置创建的代理被强制转换为Advised去查询代理状态。</p>
+	 * <p>默认值是“false”，这意味着任何AOP代理都可以转换为Advised。</p>
 	 * Set whether proxies created by this configuration should be prevented
 	 * from being cast to {@link Advised} to query proxy status.
 	 * <p>Default is "false", meaning that any AOP proxy can be cast to
@@ -148,6 +154,7 @@ public class ProxyConfig implements Serializable {
 
 
 	/**
+	 * <p>从其他配置对象复制配置</p>
 	 * Copy configuration from the other config object.
 	 * @param other object to copy configuration from
 	 */

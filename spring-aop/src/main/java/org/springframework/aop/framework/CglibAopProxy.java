@@ -58,6 +58,11 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.ReflectionUtils;
 
 /**
+ * <p>Spring AOP框架的基于cglib的AopProxy实现。</p>
+ * <p>这种类型的对象应该通过代理工厂获得，并由AdvisedSupport对象配置。该类是Spring AOP框架内部的，不需要由客户机代码直接使用。</p>
+ * <p>如果有必要，DefaultAopProxyFactory将自动创建基于cglib的代理，例如在代理目标类的情况下。</p>
+ * <p>如果底层(target)类是线程安全的，则使用这个类创建的代理是线程安全的。</p>
+ *
  * CGLIB-based {@link AopProxy} implementation for the Spring AOP framework.
  *
  * <p>Objects of this type should be obtained through proxy factories,
@@ -179,6 +184,7 @@ class CglibAopProxy implements AopProxy, Serializable {
 			validateClassIfNecessary(proxySuperClass, classLoader);
 
 			// Configure CGLIB Enhancer...
+			// 配置CGLIB增强器……
 			Enhancer enhancer = createEnhancer();
 			if (classLoader != null) {
 				enhancer.setClassLoader(classLoader);
@@ -192,6 +198,7 @@ class CglibAopProxy implements AopProxy, Serializable {
 			enhancer.setNamingPolicy(SpringNamingPolicy.INSTANCE);
 			enhancer.setStrategy(new ClassLoaderAwareGeneratorStrategy(classLoader));
 
+			// 拦截器链
 			Callback[] callbacks = getCallbacks(rootClass);
 			Class<?>[] types = new Class<?>[callbacks.length];
 			for (int x = 0; x < types.length; x++) {
@@ -203,6 +210,7 @@ class CglibAopProxy implements AopProxy, Serializable {
 			enhancer.setCallbackTypes(types);
 
 			// Generate the proxy class and create a proxy instance.
+			// 生成代理类并创建代理实例。
 			return createProxyClassAndInstance(enhancer, callbacks);
 		}
 		catch (CodeGenerationException | IllegalArgumentException ex) {
@@ -283,11 +291,13 @@ class CglibAopProxy implements AopProxy, Serializable {
 
 	private Callback[] getCallbacks(Class<?> rootClass) throws Exception {
 		// Parameters used for optimization choices...
+		// 用于优化选择的参数…
 		boolean exposeProxy = this.advised.isExposeProxy();
 		boolean isFrozen = this.advised.isFrozen();
 		boolean isStatic = this.advised.getTargetSource().isStatic();
 
 		// Choose an "aop" interceptor (used for AOP calls).
+		// 选择一个“aop”拦截器(用于aop调用)。
 		Callback aopInterceptor = new DynamicAdvisedInterceptor(this.advised);
 
 		// Choose a "straight to target" interceptor. (used for calls that are
@@ -310,6 +320,7 @@ class CglibAopProxy implements AopProxy, Serializable {
 				new StaticDispatcher(this.advised.getTargetSource().getTarget()) : new SerializableNoOp());
 
 		Callback[] mainCallbacks = new Callback[] {
+				// 将拦截器加入到Callback中
 				aopInterceptor,  // for normal advice
 				targetInterceptor,  // invoke target without considering advice, if optimized
 				new SerializableNoOp(),  // no override for methods mapped to this
@@ -648,6 +659,7 @@ class CglibAopProxy implements AopProxy, Serializable {
 
 
 	/**
+	 * <p>通用AOP回调。当目标是动态的或代理没有被冻结时使用。</p>
 	 * General purpose AOP callback. Used when the target is dynamic or when the
 	 * proxy is not frozen.
 	 */
@@ -675,6 +687,7 @@ class CglibAopProxy implements AopProxy, Serializable {
 				// Get as late as possible to minimize the time we "own" the target, in case it comes from a pool...
 				target = targetSource.getTarget();
 				Class<?> targetClass = (target != null ? target.getClass() : null);
+				// 获取拦截器链
 				List<Object> chain = this.advised.getInterceptorsAndDynamicInterceptionAdvice(method, targetClass);
 				Object retVal;
 				// Check whether we only have one InvokerInterceptor: that is,
@@ -689,6 +702,7 @@ class CglibAopProxy implements AopProxy, Serializable {
 				}
 				else {
 					// We need to create a method invocation...
+					// 我们需要创建一个方法调用…
 					retVal = new CglibMethodInvocation(proxy, target, method, args, targetClass, chain, methodProxy).proceed();
 				}
 				retVal = processReturnType(proxy, target, method, retVal);
@@ -723,6 +737,7 @@ class CglibAopProxy implements AopProxy, Serializable {
 
 
 	/**
+	 * <p>这个AOP代理所使用的AOP联盟方法调用的实现。</p>
 	 * Implementation of AOP Alliance MethodInvocation used by this AOP proxy.
 	 */
 	private static class CglibMethodInvocation extends ReflectiveMethodInvocation {
@@ -770,6 +785,7 @@ class CglibAopProxy implements AopProxy, Serializable {
 		}
 
 		/**
+		 * <p>与在调用公共方法时使用反射调用目标相比，提供了边际性能改进。</p>
 		 * Gives a marginal performance improvement versus using reflection to
 		 * invoke the target when invoking public methods.
 		 */

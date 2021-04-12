@@ -19,6 +19,13 @@ package org.springframework.beans.factory.support;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 
 /**
+ * <p>运行时用于{合并的bean定义}的后处理回调接口。BeanPostProcessor实现可以实现这个子接口，
+ * 以便对合并的bean定义(原始bean定义的经过处理的副本)进行后处理，Spring BeanFactory使用该定义创建bean实例</p>
+ *
+ * <p>例如，postProcessMergedBeanDefinition方法可以对bean定义进行内省，以便在处理bean的实际实例之前准备一些缓存的元数据。
+ * 它还允许修改bean定义，但仅限于实际用于并发修改的定义属性。本质上，这只适用于在RootBeanDefinition本身上定义的操作，而不适用
+ * 于其基类的属性。</p>
+ *
  * Post-processor callback interface for <i>merged</i> bean definitions at runtime.
  * {@link BeanPostProcessor} implementations may implement this sub-interface in order
  * to post-process the merged bean definition (a processed copy of the original bean
@@ -38,6 +45,8 @@ import org.springframework.beans.factory.config.BeanPostProcessor;
 public interface MergedBeanDefinitionPostProcessor extends BeanPostProcessor {
 
 	/**
+	 * <p>后处理指定bean的给定合并bean定义</p>
+	 *
 	 * Post-process the given merged bean definition for the specified bean.
 	 * @param beanDefinition the merged bean definition for the bean
 	 * @param beanType the actual type of the managed bean instance
@@ -47,6 +56,9 @@ public interface MergedBeanDefinitionPostProcessor extends BeanPostProcessor {
 	void postProcessMergedBeanDefinition(RootBeanDefinition beanDefinition, Class<?> beanType, String beanName);
 
 	/**
+	 * <p>通知指定名称的bean定义已重置，此后处理器应清除受影响bean的所有元数据。</p>
+	 * <p>默认实现为空。</p>
+	 *
 	 * A notification that the bean definition for the specified name has been reset,
 	 * and that this post-processor should clear any metadata for the affected bean.
 	 * <p>The default implementation is empty.

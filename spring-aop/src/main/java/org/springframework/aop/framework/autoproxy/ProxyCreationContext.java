@@ -20,6 +20,7 @@ import org.springframework.core.NamedThreadLocal;
 import org.springframework.lang.Nullable;
 
 /**
+ * <p>当前代理创建上下文的Holder，由AbstractAdvisorAutoProxyCreator等自动代理创建器公开。</p>
  * Holder for the current proxy creation context, as exposed by auto-proxy creators
  * such as {@link AbstractAdvisorAutoProxyCreator}.
  *
@@ -29,7 +30,10 @@ import org.springframework.lang.Nullable;
  */
 public final class ProxyCreationContext {
 
-	/** ThreadLocal holding the current proxied bean name during Advisor matching. */
+	/**
+	 * 在Advisor匹配期间保存当前的代理bean名。
+	 * ThreadLocal holding the current proxied bean name during Advisor matching.
+	 */
 	private static final ThreadLocal<String> currentProxiedBeanName =
 			new NamedThreadLocal<>("Name of currently proxied bean");
 
@@ -48,6 +52,7 @@ public final class ProxyCreationContext {
 	}
 
 	/**
+	 * <p>设置当前代理bean实例的名称。</p>
 	 * Set the name of the currently proxied bean instance.
 	 * @param beanName the name of the bean, or {@code null} to reset it
 	 */

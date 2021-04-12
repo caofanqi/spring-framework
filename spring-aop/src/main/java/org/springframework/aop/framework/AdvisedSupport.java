@@ -43,6 +43,10 @@ import org.springframework.util.ClassUtils;
 import org.springframework.util.CollectionUtils;
 
 /**
+ * <p>AOP代理配置管理器的基类。它们本身不是AOP代理，但是这个类的子类通常是工厂，从这些工厂可以直接获得AOP代理实例。</p>
+ * <p>这个类将Advices和Advisors的内务管理从子类中解放出来，但实际上并不实现由子类提供的代理创建方法。</p>
+ * <p>这个类是可序列化的;子类不需要这样。该类用于保存代理的快照。</p>
+ *
  * Base class for AOP proxy configuration managers.
  * These are not themselves AOP proxies, but subclasses of this class are
  * normally factories from which AOP proxy instances are obtained directly.
@@ -65,6 +69,7 @@ public class AdvisedSupport extends ProxyConfig implements Advised {
 
 
 	/**
+	 * <p>当没有target，且行为由advisors提供时，使用规范TargetSource。</p>
 	 * Canonical TargetSource when there's no target, and behavior is
 	 * supplied by the advisors.
 	 */
@@ -84,12 +89,14 @@ public class AdvisedSupport extends ProxyConfig implements Advised {
 	private transient Map<MethodCacheKey, List<Object>> methodCache;
 
 	/**
+	 * <p>由代理实现的接口。保存在List中的注册顺序，以创建具有指定顺序的接口的JDK代理。</p>
 	 * Interfaces to be implemented by the proxy. Held in List to keep the order
 	 * of registration, to create JDK proxy with specified order of interfaces.
 	 */
 	private List<Class<?>> interfaces = new ArrayList<>();
 
 	/**
+	 * <p>Advisors的名单。如果添加了一个Advice，那么在添加到此列表之前，它将被包装在一个Advisor中。</p>
 	 * List of Advisors. If an Advice is added, it will be wrapped
 	 * in an Advisor before being added to this List.
 	 */
@@ -114,6 +121,7 @@ public class AdvisedSupport extends ProxyConfig implements Advised {
 
 
 	/**
+	 * <p>将给定对象设置为target。将为对象创建一个SingletonTargetSource。</p>
 	 * Set the given object as target.
 	 * Will create a SingletonTargetSource for the object.
 	 * @see #setTargetSource
@@ -134,6 +142,9 @@ public class AdvisedSupport extends ProxyConfig implements Advised {
 	}
 
 	/**
+	 * <p>设置要代理的目标类，指示代理应该可以转换为给定的类。</p>
+	 * <p>在内部，EmptyTargetSource将使用给定目标类。所需的代理类型将在实际创建代理时确定。</p>
+	 * <p>这是对设置“targetSource”或“target”的替代，因为我们想要基于目标类(可以是接口或具体类)的代理，而没有完全可用的targetSource。</p>
 	 * Set a target class to be proxied, indicating that the proxy
 	 * should be castable to the given class.
 	 * <p>Internally, an {@link org.springframework.aop.target.EmptyTargetSource}
@@ -457,6 +468,7 @@ public class AdvisedSupport extends ProxyConfig implements Advised {
 
 
 	/**
+	 * <p>根据这个配置为给定的方法确定一个MethodInterceptor对象列表。</p>
 	 * Determine a list of {@link org.aopalliance.intercept.MethodInterceptor} objects
 	 * for the given method, based on this configuration.
 	 * @param method the proxied method
@@ -561,6 +573,7 @@ public class AdvisedSupport extends ProxyConfig implements Advised {
 
 
 	/**
+	 * <p>方法的简单包装类。在缓存方法时用作键，以便进行有效的equals和hashCode比较。</p>
 	 * Simple wrapper class around a Method. Used as the key when
 	 * caching methods, for efficient equals and hashCode comparisons.
 	 */

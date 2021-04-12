@@ -19,6 +19,10 @@ package org.aopalliance.intercept;
 import javax.annotation.Nonnull;
 
 /**
+ * <p>拦截一个新对象的构造。</p>
+ * <p>用户应该实现construct(ConstructorInvocation)方法来修改原始的行为。
+ * 例如，以下类实现了一个单例拦截器(只允许被拦截类的唯一实例):</p>
+ *
  * Intercepts the construction of a new object.
  *
  * <p>The user should implement the {@link
@@ -46,6 +50,7 @@ import javax.annotation.Nonnull;
 public interface ConstructorInterceptor extends Interceptor  {
 
 	/**
+	 * <p>实现此方法可以在构造新对象之前和之后执行额外的处理。优雅的实现当然会调用Joinpoint.proceed()。</p>
 	 * Implement this method to perform extra treatments before and
 	 * after the construction of a new object. Polite implementations
 	 * would certainly like to invoke {@link Joinpoint#proceed()}.

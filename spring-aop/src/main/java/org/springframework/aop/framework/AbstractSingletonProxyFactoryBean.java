@@ -28,6 +28,9 @@ import org.springframework.lang.Nullable;
 import org.springframework.util.ClassUtils;
 
 /**
+ * <p>方便的FactoryBean类型超类，它产生单例范围的代理对象。</p>
+ * <p>管理前拦截器和后拦截器(引用，而不是像ProxyFactoryBean中的拦截器名称)，并提供一致的接口管理。</p>
+ *
  * Convenient superclass for {@link FactoryBean} types that produce singleton-scoped
  * proxy objects.
  *
@@ -203,6 +206,7 @@ public abstract class AbstractSingletonProxyFactoryBean extends ProxyConfig
 	}
 
 	/**
+	 * <p>子类在创建代理实例之前对ProxyFactory进行后处理的钩子。</p>
 	 * A hook for subclasses to post-process the {@link ProxyFactory}
 	 * before creating the proxy instance with it.
 	 * @param proxyFactory the AOP ProxyFactory about to be used
@@ -245,6 +249,9 @@ public abstract class AbstractSingletonProxyFactoryBean extends ProxyConfig
 
 
 	/**
+	 * <p>为这个代理工厂bean创建“主”拦截器。通常是Advisor，但也可以是任何类型的Advice。</p>
+	 * <p>预拦截器将在此拦截器之前应用，后拦截器将在此拦截器之后应用。</p>
+	 *
 	 * Create the "main" interceptor for this proxy factory bean.
 	 * Typically an Advisor, but can also be any type of Advice.
 	 * <p>Pre-interceptors will be applied before, post-interceptors

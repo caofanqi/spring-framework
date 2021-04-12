@@ -21,6 +21,9 @@ import java.lang.reflect.Method;
 import javax.annotation.Nonnull;
 
 /**
+ * <p>对方法调用的描述，在方法调用时给拦截器。</p>
+ * <p>方法调用是一个连接点，可以被方法拦截器拦截。</p>
+ *
  * Description of an invocation to a method, given to an interceptor
  * upon method-call.
  *
@@ -33,6 +36,8 @@ import javax.annotation.Nonnull;
 public interface MethodInvocation extends Invocation {
 
 	/**
+	 * <p>获取被调用的方法。</p>
+	 * <p>该方法是Joinpoint.getStaticPart()方法的友好实现(结果相同)。</p>
 	 * Get the method being called.
 	 * <p>This method is a friendly implementation of the
 	 * {@link Joinpoint#getStaticPart()} method (same result).

@@ -70,6 +70,9 @@ public abstract class AbstractAspectJAdvisorFactory implements AspectJAdvisorFac
 
 
 	/**
+	 * <p>如果有@Aspect注释，并且不是由ajc编译的，我们认为它是适合Spring AOP系统使用的AspectJ aspect。
+	 * 后一个测试的原因是，用代码样式（AspectJ language）编写的aspects在ajc用-1.5标志编译时也有注释，但是Spring AOP不能使用它们。</p>
+	 *
 	 * We consider something to be an AspectJ aspect suitable for use by the Spring AOP system
 	 * if it has the @Aspect annotation, and was not compiled by ajc. The reason for this latter test
 	 * is that aspects written in the code-style (AspectJ language) also have the annotation present
@@ -103,6 +106,7 @@ public abstract class AbstractAspectJAdvisorFactory implements AspectJAdvisorFac
 	@Override
 	public void validate(Class<?> aspectClass) throws AopConfigException {
 		// If the parent has the annotation and isn't abstract it's an error
+		// 如果父类有注释，但不是抽象的，那就是错误
 		if (aspectClass.getSuperclass().getAnnotation(Aspect.class) != null &&
 				!Modifier.isAbstract(aspectClass.getSuperclass().getModifiers())) {
 			throw new AopConfigException("[" + aspectClass.getName() + "] cannot extend concrete aspect [" +
@@ -124,6 +128,7 @@ public abstract class AbstractAspectJAdvisorFactory implements AspectJAdvisorFac
 	}
 
 	/**
+	 * <p>找到并返回给定方法上的第一个AspectJ注释(反正应该只有一个…)</p>
 	 * Find and return the first AspectJ annotation on the given method
 	 * (there <i>should</i> only be one anyway...).
 	 */
@@ -131,6 +136,7 @@ public abstract class AbstractAspectJAdvisorFactory implements AspectJAdvisorFac
 	@Nullable
 	protected static AspectJAnnotation<?> findAspectJAnnotationOnMethod(Method method) {
 		for (Class<?> clazz : ASPECTJ_ANNOTATION_CLASSES) {
+			// 获取指定方法上的注解，并使用AspectJAnnotation封装
 			AspectJAnnotation<?> foundAnnotation = findAnnotation(method, (Class<Annotation>) clazz);
 			if (foundAnnotation != null) {
 				return foundAnnotation;
@@ -152,6 +158,7 @@ public abstract class AbstractAspectJAdvisorFactory implements AspectJAdvisorFac
 
 
 	/**
+	 * <p>AspectJ注释类型的枚举。</p>
 	 * Enum for AspectJ annotation types.
 	 * @see AspectJAnnotation#getAnnotationType()
 	 */
@@ -162,6 +169,8 @@ public abstract class AbstractAspectJAdvisorFactory implements AspectJAdvisorFac
 
 
 	/**
+	 * <p>类建模AspectJ注释，公开其类型枚举和切入点字符串。</p>
+	 *
 	 * Class modelling an AspectJ annotation, exposing its type enumeration and
 	 * pointcut String.
 	 * @param <A> the annotation type

@@ -23,8 +23,17 @@ import org.springframework.aop.SpringProxy;
 import org.springframework.core.NativeDetector;
 
 /**
+ * <p>默认AopProxyFactory实现，创建CGLIB代理或JDK动态代理。</p>
+ *
  * Default {@link AopProxyFactory} implementation, creating either a CGLIB proxy
  * or a JDK dynamic proxy.
+ *
+ * <p>创建一个CGLIB代理，如果一个给定的AdvisedSupport实例为true:</p>
+ * <ul>
+ * <li>设置了optimize标志
+ * <li>设置了proxyTargetClass
+ * <li>没有指定代理接口
+ * </ul>
  *
  * <p>Creates a CGLIB proxy if one the following is true for a given
  * {@link AdvisedSupport} instance:
@@ -33,6 +42,8 @@ import org.springframework.core.NativeDetector;
  * <li>the {@code proxyTargetClass} flag is set
  * <li>no proxy interfaces have been specified
  * </ul>
+ *
+ * <p>通常，指定proxyTargetClass来执行CGLIB代理，或者指定一个或多个接口来使用JDK动态代理。</p>
  *
  * <p>In general, specify {@code proxyTargetClass} to enforce a CGLIB proxy,
  * or specify one or more interfaces to use a JDK dynamic proxy.
@@ -59,11 +70,14 @@ public class DefaultAopProxyFactory implements AopProxyFactory, Serializable {
 						"Either an interface or a target is required for proxy creation.");
 			}
 			if (targetClass.isInterface() || Proxy.isProxyClass(targetClass)) {
+				// 指定对象是接口，或是jdk生成出的代理对象，只能使用JDK动态代理
 				return new JdkDynamicAopProxy(config);
 			}
+			// CGLIB 代理
 			return new ObjenesisCglibAopProxy(config);
 		}
 		else {
+			// JDK动态代理
 			return new JdkDynamicAopProxy(config);
 		}
 	}

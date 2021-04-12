@@ -17,6 +17,11 @@
 package org.springframework.aop;
 
 /**
+ * <p>限制pointcut或introduction匹配给定目标类集的过滤器。</p>
+ * <p>可以作为Pointcut的一部分使用，也可以用于引IntroductionAdvisor的整个目标。</p>
+ * <p>这个接口的具体实现通常应该提供Object.equals(Object)和Object.hashcode()的正确实现，
+ * 以便允许过滤器在缓存场景中使用——例如，在由CGLIB生成的代理中。</p>
+ *
  * Filter that restricts matching of a pointcut or introduction to
  * a given set of target classes.
  *
@@ -36,6 +41,7 @@ package org.springframework.aop;
 public interface ClassFilter {
 
 	/**
+	 * <p>切入点应该应用于给定的接口或目标类吗?</p>
 	 * Should the pointcut apply to the given interface or target class?
 	 * @param clazz the candidate target class
 	 * @return whether the advice should apply to the given target class
@@ -44,6 +50,7 @@ public interface ClassFilter {
 
 
 	/**
+	 * <p>匹配所有类的类筛选器的规范实例。</p>
 	 * Canonical instance of a ClassFilter that matches all classes.
 	 */
 	ClassFilter TRUE = TrueClassFilter.INSTANCE;

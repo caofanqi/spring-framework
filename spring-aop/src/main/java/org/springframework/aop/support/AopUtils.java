@@ -212,6 +212,8 @@ public abstract class AopUtils {
 	}
 
 	/**
+	 * <p>给定的切入点能应用于给定的类吗?</p>
+	 * <p>这是一个重要的测试，因为它可以用来优化类的切入点。</p>
 	 * Can the given pointcut apply at all on the given class?
 	 * <p>This is an important test as it can be used to optimize
 	 * out a pointcut for a class.
@@ -271,6 +273,9 @@ public abstract class AopUtils {
 	}
 
 	/**
+	 * <p>给定的advisor是否可以应用于给定的类?</p>
+	 * <p>这是一个重要的测试，因为可以使用它来优化类的advisor。这个版本还考虑了引入(用IntroductionAwareMethodMatchers)</p>
+	 *
 	 * Can the given advisor apply at all on the given class?
 	 * <p>This is an important test as it can be used to optimize out a advisor for a class.
 	 * This version also takes into account introductions (for IntroductionAwareMethodMatchers).
@@ -295,6 +300,7 @@ public abstract class AopUtils {
 	}
 
 	/**
+	 * <p>确定适用于给定类的candidateAdvisors列表的子列表。</p>
 	 * Determine the sublist of the {@code candidateAdvisors} list
 	 * that is applicable to the given class.
 	 * @param candidateAdvisors the Advisors to evaluate
@@ -306,8 +312,10 @@ public abstract class AopUtils {
 		if (candidateAdvisors.isEmpty()) {
 			return candidateAdvisors;
 		}
+		// 符合的Advisors列表
 		List<Advisor> eligibleAdvisors = new ArrayList<>();
 		for (Advisor candidate : candidateAdvisors) {
+			// 首先判断IntroductionAdvisor
 			if (candidate instanceof IntroductionAdvisor && canApply(candidate, clazz)) {
 				eligibleAdvisors.add(candidate);
 			}
@@ -316,8 +324,10 @@ public abstract class AopUtils {
 		for (Advisor candidate : candidateAdvisors) {
 			if (candidate instanceof IntroductionAdvisor) {
 				// already processed
+				// 已经处理
 				continue;
 			}
+			// 判断其他Advisor
 			if (canApply(candidate, clazz, hasIntroductions)) {
 				eligibleAdvisors.add(candidate);
 			}

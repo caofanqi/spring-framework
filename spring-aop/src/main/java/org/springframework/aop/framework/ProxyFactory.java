@@ -23,6 +23,8 @@ import org.springframework.lang.Nullable;
 import org.springframework.util.ClassUtils;
 
 /**
+ * <p>用于编程使用的AOP代理的工厂，而不是通过bean工厂中的声明式设置。这个类提供了在定制用户代码中获取和配置AOP代理实例的简单方法。</p>
+ *
  * Factory for AOP proxies for programmatic use, rather than via declarative
  * setup in a bean factory. This class provides a simple way of obtaining
  * and configuring AOP proxy instances in custom user code.
@@ -98,6 +100,10 @@ public class ProxyFactory extends ProxyCreatorSupport {
 	}
 
 	/**
+	 * <p>根据这个工厂的设置创建一个新的代理。</p>
+	 * <p>可以重复调用。如果我们添加或删除接口，效果会有所不同。可以添加和删除拦截器。</p>
+	 * <p>使用给定的类装入器(如果需要创建代理)。</p>
+	 *
 	 * Create a new proxy according to the settings in this factory.
 	 * <p>Can be called repeatedly. Effect will vary if we've added
 	 * or removed interfaces. Can add and remove interceptors.

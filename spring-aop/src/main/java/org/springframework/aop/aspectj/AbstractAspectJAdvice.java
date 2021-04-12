@@ -50,6 +50,8 @@ import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StringUtils;
 
 /**
+ * <p>包装AspectJ aspect或带AspectJ注释的advice方法的AOP联盟Advice类的基类。</p>
+ *
  * Base class for AOP Alliance {@link org.aopalliance.aop.Advice} classes
  * wrapping an AspectJ aspect or an AspectJ-annotated advice method.
  *
@@ -158,6 +160,7 @@ public abstract class AbstractAspectJAdvice implements Advice, AspectJPrecedence
 
 
 	/**
+	 * <p>为给定的通知方法创建一个新的AbstractAspectJAdvice。</p>
 	 * Create a new AbstractAspectJAdvice for the given advice method.
 	 * @param aspectJAdviceMethod the AspectJ-style advice method
 	 * @param pointcut the AspectJ expression pointcut
@@ -603,6 +606,7 @@ public abstract class AbstractAspectJAdvice implements Advice, AspectJPrecedence
 
 
 	/**
+	 * <p>调用通知方法。</p>
 	 * Invoke the advice method.
 	 * @param jpMatch the JoinPointMatch that matched this execution join point
 	 * @param returnValue the return value from the method execution (may be null)
@@ -630,6 +634,7 @@ public abstract class AbstractAspectJAdvice implements Advice, AspectJPrecedence
 			actualArgs = null;
 		}
 		try {
+			// 调用方法
 			ReflectionUtils.makeAccessible(this.aspectJAdviceMethod);
 			return this.aspectJAdviceMethod.invoke(this.aspectInstanceFactory.getAspectInstance(), actualArgs);
 		}

@@ -26,6 +26,7 @@ import org.springframework.aop.AfterAdvice;
 import org.springframework.lang.Nullable;
 
 /**
+ * <p>Spring AOP advice在advice方法之后包装了一个AspectJ。</p>
  * Spring AOP advice wrapping an AspectJ after advice method.
  *
  * @author Rod Johnson
@@ -49,6 +50,7 @@ public class AspectJAfterAdvice extends AbstractAspectJAdvice
 			return mi.proceed();
 		}
 		finally {
+			// 调用通知方法
 			invokeAdviceMethod(getJoinPointMatch(), null, null);
 		}
 	}

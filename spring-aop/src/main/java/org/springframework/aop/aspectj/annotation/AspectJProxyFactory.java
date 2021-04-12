@@ -32,6 +32,8 @@ import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 
 /**
+ * <p>基于AspectJ的代理工厂，允许以编程方式构建包含AspectJ方面的代理(代码风格以及Java 5注释风格)。</p>
+ *
  * AspectJ-based proxy factory, allowing for programmatic building
  * of proxies which include AspectJ aspects (code style as well
  * Java 5 annotation style).
@@ -82,6 +84,9 @@ public class AspectJProxyFactory extends ProxyCreatorSupport {
 
 
 	/**
+	 * <p>将提供的aspect实例添加到链中。提供的aspect实例的类型必须是singleton aspect。
+	 * 当使用这个方法时，真正的单例生命周期是不受尊重的——调用者负责管理以这种方式添加的任何aspects的生命周期。</p>
+	 *
 	 * Add the supplied aspect instance to the chain. The type of the aspect instance
 	 * supplied must be a singleton aspect. True singleton lifecycle is not honoured when
 	 * using this method - the caller is responsible for managing the lifecycle of any
@@ -91,16 +96,19 @@ public class AspectJProxyFactory extends ProxyCreatorSupport {
 	public void addAspect(Object aspectInstance) {
 		Class<?> aspectClass = aspectInstance.getClass();
 		String aspectName = aspectClass.getName();
+		// 通过aspect的class和name构建一个AspectMetadata
 		AspectMetadata am = createAspectMetadata(aspectClass, aspectName);
 		if (am.getAjType().getPerClause().getKind() != PerClauseKind.SINGLETON) {
 			throw new IllegalArgumentException(
 					"Aspect class [" + aspectClass.getName() + "] does not define a singleton aspect");
 		}
+		// 使用AspectInstanceFactory向链中添加Advisors
 		addAdvisorsFromAspectInstanceFactory(
 				new SingletonMetadataAwareAspectInstanceFactory(aspectInstance, aspectName));
 	}
 
 	/**
+	 * <p>将提供类型的aspect添加到通知链的末尾。</p>
 	 * Add an aspect of the supplied type to the end of the advice chain.
 	 * @param aspectClass the AspectJ aspect class
 	 */
@@ -113,21 +121,26 @@ public class AspectJProxyFactory extends ProxyCreatorSupport {
 
 
 	/**
+	 * <p>将提供的MetadataAwareAspectInstanceFactory中的所有Advisors添加到当前链中。如果需要，暴露任何特殊目的Advisors。</p>
 	 * Add all {@link Advisor Advisors} from the supplied {@link MetadataAwareAspectInstanceFactory}
 	 * to the current chain. Exposes any special purpose {@link Advisor Advisors} if needed.
 	 * @see AspectJProxyUtils#makeAdvisorChainAspectJCapableIfNecessary(List)
 	 */
 	private void addAdvisorsFromAspectInstanceFactory(MetadataAwareAspectInstanceFactory instanceFactory) {
+		// 通过aspectFactory获取advisors
 		List<Advisor> advisors = this.aspectFactory.getAdvisors(instanceFactory);
 		Class<?> targetClass = getTargetClass();
 		Assert.state(targetClass != null, "Unresolvable target class");
+		// 查找适用于目标class的advisors
 		advisors = AopUtils.findAdvisorsThatCanApply(advisors, targetClass);
 		AspectJProxyUtils.makeAdvisorChainAspectJCapableIfNecessary(advisors);
 		AnnotationAwareOrderComparator.sort(advisors);
+		// 添加到链中
 		addAdvisors(advisors);
 	}
 
 	/**
+	 * <p>为提供的aspect类型创建一个AspectMetadata实例。</p>
 	 * Create an {@link AspectMetadata} instance for the supplied aspect type.
 	 */
 	private AspectMetadata createAspectMetadata(Class<?> aspectClass, String aspectName) {
@@ -160,6 +173,7 @@ public class AspectJProxyFactory extends ProxyCreatorSupport {
 	}
 
 	/**
+	 * <p>获取给定的aspect类型的singleton aspect实例。如果在实例缓存中找不到实例，则创建实例。</p>
 	 * Get the singleton aspect instance for the supplied aspect type.
 	 * An instance is created if one cannot be found in the instance cache.
 	 */

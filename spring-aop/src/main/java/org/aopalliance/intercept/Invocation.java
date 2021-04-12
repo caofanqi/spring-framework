@@ -19,6 +19,9 @@ package org.aopalliance.intercept;
 import javax.annotation.Nonnull;
 
 /**
+ * <p>这个接口表示程序中的调用。</p>
+ * <p>调用是一个连接点，可以被拦截器拦截。</p>
+ *
  * This interface represents an invocation in the program.
  *
  * <p>An invocation is a joinpoint and can be intercepted by an
@@ -29,6 +32,7 @@ import javax.annotation.Nonnull;
 public interface Invocation extends Joinpoint {
 
 	/**
+	 * <p>以数组对象的形式获取参数。可以通过改变数组中的元素值来改变参数。</p>
 	 * Get the arguments as an array object.
 	 * It is possible to change element values within this
 	 * array to change the arguments.
