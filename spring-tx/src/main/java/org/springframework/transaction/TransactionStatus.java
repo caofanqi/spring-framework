@@ -19,6 +19,10 @@ package org.springframework.transaction;
 import java.io.Flushable;
 
 /**
+ * <p>事务状态的表示。</p>
+ * <p>事务代码可以使用它来检索状态信息，并以编程方式请求回滚(而不是抛出导致隐式回滚的异常)。</p>
+ * <p>包括SavepointManager接口，以提供对保存点管理工具的访问。请注意，只有在底层事务管理器支持的情况下，保存点管理才可用。</p>
+ *
  * Representation of the status of a transaction.
  *
  * <p>Transactional code can use this to retrieve status information,
@@ -39,6 +43,9 @@ import java.io.Flushable;
 public interface TransactionStatus extends TransactionExecution, SavepointManager, Flushable {
 
 	/**
+	 * <p>返回该事务是否在内部携带保存点，也就是说，已根据保存点创建嵌套事务。</p>
+	 * <p>这个方法主要用于诊断，还有isNewTransaction()。对于自定义保存点的编程处理，请使用SavepointManager提供的操作。</p>
+	 *
 	 * Return whether this transaction internally carries a savepoint,
 	 * that is, has been created as nested transaction based on a savepoint.
 	 * <p>This method is mainly here for diagnostic purposes, alongside
@@ -52,6 +59,8 @@ public interface TransactionStatus extends TransactionExecution, SavepointManage
 	boolean hasSavepoint();
 
 	/**
+	 * <p>如果适用的话，将底层会话刷新到数据存储区:例如，所有受影响的Hibernate/JPA会话。</p>
+	 * <p>这实际上只是一个提示，如果底层事务管理器没有flush概念，这可能是一个空操作。刷新信号可能应用于主资源或事务同步，这取决于底层资源。</p>
 	 * Flush the underlying session to the datastore, if applicable:
 	 * for example, all affected Hibernate/JPA sessions.
 	 * <p>This is effectively just a hint and may be a no-op if the underlying

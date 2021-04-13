@@ -102,6 +102,7 @@ public class AnnotationTransactionAttributeSource extends AbstractFallbackTransa
 			}
 		}
 		else {
+			// 初始化事务注解解析器
 			this.annotationParsers = Collections.singleton(new SpringTransactionAnnotationParser());
 		}
 	}
@@ -160,6 +161,10 @@ public class AnnotationTransactionAttributeSource extends AbstractFallbackTransa
 	}
 
 	/**
+	 * <p>确定给定方法或类的事务属性。</p>
+	 * <p>该实现委托配置的TransactionAnnotationParser将已知的注释解析到Spring的元数据属性类中。如果不是事务性的，则返回null。</p>
+	 * <p>可以覆盖，以支持携带事务元数据的自定义注释。</p>
+	 *
 	 * Determine the transaction attribute for the given method or class.
 	 * <p>This implementation delegates to configured
 	 * {@link TransactionAnnotationParser TransactionAnnotationParsers}

@@ -28,6 +28,9 @@ import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 
 /**
+ * <p>基于BeanFactory的PointcutAdvisor允许将任何Advice配置为对BeanFactory中的通知bean的引用。</p>
+ * <p>指定通知bean的名称而不是通知对象本身(如果在BeanFactory中运行)会增加初始化时的松耦合，以便在切入点实际匹配之前不初始化通知对象。</p>
+ *
  * Abstract BeanFactory-based PointcutAdvisor that allows for any Advice
  * to be configured as reference to an Advice bean in a BeanFactory.
  *
@@ -113,6 +116,7 @@ public abstract class AbstractBeanFactoryPointcutAdvisor extends AbstractPointcu
 
 		if (this.beanFactory.isSingleton(this.adviceBeanName)) {
 			// Rely on singleton semantics provided by the factory.
+			// 依赖于工厂提供的单例语义
 			advice = this.beanFactory.getBean(this.adviceBeanName, Advice.class);
 			this.advice = advice;
 			return advice;

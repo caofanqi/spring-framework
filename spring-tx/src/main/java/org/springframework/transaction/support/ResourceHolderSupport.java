@@ -48,6 +48,7 @@ public abstract class ResourceHolderSupport implements ResourceHolder {
 
 
 	/**
+	 * <p>将资源标记为与事务同步。</p>
 	 * Mark the resource as synchronized with a transaction.
 	 */
 	public void setSynchronizedWithTransaction(boolean synchronizedWithTransaction) {
@@ -55,6 +56,7 @@ public abstract class ResourceHolderSupport implements ResourceHolder {
 	}
 
 	/**
+	 * <p>返回资源是否与事务同步。</p>
 	 * Return whether the resource is synchronized with a transaction.
 	 */
 	public boolean isSynchronizedWithTransaction() {

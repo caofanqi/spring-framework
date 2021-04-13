@@ -24,6 +24,7 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 
 /**
+ * <p>处理带@TransactionalEventListener注释方法的EventListenerFactory实现。</p>
  * {@link EventListenerFactory} implementation that handles {@link TransactionalEventListener}
  * annotated methods.
  *

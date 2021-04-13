@@ -8,6 +8,7 @@ import org.springframework.context.annotation.*;
 @Configuration
 @EnableAspectJAutoProxy
 @EnableLoadTimeWeaving
+@Import(JdbcConfig.class)
 @ComponentScan(basePackages = "cn.caofanqi")
 public class AppConfig {
 

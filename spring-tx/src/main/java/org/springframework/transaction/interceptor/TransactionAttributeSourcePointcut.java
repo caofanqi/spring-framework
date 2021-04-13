@@ -27,6 +27,8 @@ import org.springframework.transaction.TransactionManager;
 import org.springframework.util.ObjectUtils;
 
 /**
+ * <p>实现一个切入点的抽象类，该切入点与底层的TransactionAttributeSource是否具有给定方法的属性相匹配。</p>
+ *
  * Abstract class that implements a Pointcut that matches if the underlying
  * {@link TransactionAttributeSource} has an attribute for a given method.
  *

@@ -8,4 +8,6 @@ dependencies {
     implementation group: 'org.springframework', name: 'spring-aspects', version: '5.3.5'
     compile(project(":spring-instrument"))
     compile(project(":spring-tx"))
+    compile(project(":spring-jdbc"))
+    implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.23'
 }

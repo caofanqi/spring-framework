@@ -33,13 +33,18 @@ import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 
 /**
+ * <p>管理每个线程的资源和事务同步的中央委托。由资源管理代码使用，而不是由典型的应用程序代码使用。</p>
  * Central delegate that manages resources and transaction synchronizations per thread.
  * To be used by resource management code but not by typical application code.
  *
+ * <p>支持每个key一个资源而不覆盖，也就是说，在为同一个key设置新资源之前，需要先删除一个资源。如果同步处于活动状态，则支持事务同步列表。</p>
  * <p>Supports one resource per key without overwriting, that is, a resource needs
  * to be removed before a new one can be set for the same key.
  * Supports a list of transaction synchronizations if synchronization is active.
  *
+ * <p>资源管理代码应该通过getResource检查线程绑定的资源，例如JDBC连接或Hibernate会话。
+ * 这样的代码通常不应该将资源绑定到线程，因为这是事务管理器的职责。
+ * 另一种选择是，如果事务同步是活动的，则在第一次使用时延迟绑定，以执行跨任意数量资源的事务。</p>
  * <p>Resource management code should check for thread-bound resources, e.g. JDBC
  * Connections or Hibernate Sessions, via {@code getResource}. Such code is
  * normally not supposed to bind resources to threads, as this is the responsibility
@@ -47,6 +52,9 @@ import org.springframework.util.Assert;
  * transaction synchronization is active, for performing transactions that span
  * an arbitrary number of resources.
  *
+ * <p>事务同步必须由事务管理器通过initSynchronization()和clearSynchronization()来激活和清理激活。
+ * 这是由AbstractPlatformTransactionManager自动支持的，因此所有标准的Spring事务管理器，
+ * 比如JtaTransactionManager和DataSourceTransactionManager。</p>
  * <p>Transaction synchronization must be activated and deactivated by a transaction
  * manager via {@link #initSynchronization()} and {@link #clearSynchronization()}.
  * This is automatically supported by {@link AbstractPlatformTransactionManager},
@@ -54,12 +62,15 @@ import org.springframework.util.Assert;
  * {@link org.springframework.transaction.jta.JtaTransactionManager} and
  * {@link org.springframework.jdbc.datasource.DataSourceTransactionManager}.
  *
+ * <p>资源管理代码应该只在这个管理器激活时注册同步，这可以通过isSynchronizationActive检查;
+ * 它应该执行立即的资源清理。如果事务同步不处于活动状态，则要么没有当前事务，要么事务管理器不支持事务同步。</p>
  * <p>Resource management code should only register synchronizations when this
  * manager is active, which can be checked via {@link #isSynchronizationActive};
  * it should perform immediate resource cleanup else. If transaction synchronization
  * isn't active, there is either no current transaction, or the transaction manager
  * doesn't support transaction synchronization.
  *
+ * <p>例如，同步用于在JTA事务中总是返回相同的资源，例如JDBC连接或Hibernate会话，分别用于任何给定的数据源或SessionFactory。</p>
  * <p>Synchronization is for example used to always return the same resources
  * within a JTA transaction, e.g. a JDBC Connection or a Hibernate Session for
  * any given DataSource or SessionFactory, respectively.
@@ -128,6 +139,7 @@ public abstract class TransactionSynchronizationManager {
 	}
 
 	/**
+	 * <p>检索绑定到当前线程的给定key的资源。</p>
 	 * Retrieve a resource for the given key that is bound to the current thread.
 	 * @param key the key to check (usually the resource factory)
 	 * @return a value bound to the current thread (usually the active
@@ -146,6 +158,7 @@ public abstract class TransactionSynchronizationManager {
 	}
 
 	/**
+	 * <p>实际检查给定键绑定的资源的值。</p>
 	 * Actually check the value of the resource that is bound for the given key.
 	 */
 	@Nullable
@@ -168,6 +181,7 @@ public abstract class TransactionSynchronizationManager {
 	}
 
 	/**
+	 * <p>将给定的资源与给定的键绑定到当前线程。</p>
 	 * Bind the given resource for the given key to the current thread.
 	 * @param key the key to bind the value to (usually the resource factory)
 	 * @param value the value to bind (usually the active resource object)
@@ -199,6 +213,7 @@ public abstract class TransactionSynchronizationManager {
 	}
 
 	/**
+	 * <p>从当前线程中解绑定给定键的资源。</p>
 	 * Unbind a resource for the given key from the current thread.
 	 * @param key the key to unbind (usually the resource factory)
 	 * @return the previously bound value (usually the active resource object)
@@ -227,6 +242,7 @@ public abstract class TransactionSynchronizationManager {
 	}
 
 	/**
+	 * <p>实际上移除绑定到给定键的资源的值。</p>
 	 * Actually remove the value of the resource that is bound for the given key.
 	 */
 	@Nullable
@@ -237,6 +253,7 @@ public abstract class TransactionSynchronizationManager {
 		}
 		Object value = map.remove(actualKey);
 		// Remove entire ThreadLocal if empty...
+		// 删除整个ThreadLocal如果为空…
 		if (map.isEmpty()) {
 			resources.remove();
 		}
@@ -257,6 +274,7 @@ public abstract class TransactionSynchronizationManager {
 	//-------------------------------------------------------------------------
 
 	/**
+	 * <p>如果当前线程的事务同步是活动的，则返回。可以在注册之前调用，以避免不必要的实例创建。</p>
 	 * Return if transaction synchronization is active for the current thread.
 	 * Can be called before register to avoid unnecessary instance creation.
 	 * @see #registerSynchronization
@@ -266,6 +284,7 @@ public abstract class TransactionSynchronizationManager {
 	}
 
 	/**
+	 * <p>激活当前线程的事务同步。由事务管理器在事务开始时调用。</p>
 	 * Activate transaction synchronization for the current thread.
 	 * Called by a transaction manager on transaction begin.
 	 * @throws IllegalStateException if synchronization is already active
@@ -300,6 +319,7 @@ public abstract class TransactionSynchronizationManager {
 	}
 
 	/**
+	 * <p>返回当前线程的所有已注册同步的不可修改快照列表。</p>
 	 * Return an unmodifiable snapshot list of all registered synchronizations
 	 * for the current thread.
 	 * @return unmodifiable List of TransactionSynchronization instances
@@ -326,6 +346,7 @@ public abstract class TransactionSynchronizationManager {
 	}
 
 	/**
+	 * <p>取消当前线程的事务同步。事务管理器在事务清理时调用。</p>
 	 * Deactivate transaction synchronization for the current thread.
 	 * Called by the transaction manager on transaction cleanup.
 	 * @throws IllegalStateException if synchronization is not active
@@ -354,6 +375,7 @@ public abstract class TransactionSynchronizationManager {
 	}
 
 	/**
+	 * <p>返回当前事务的名称，如果没有设置，则返回null。由资源管理代码调用，以优化每个用例，例如优化特定命名事务的获取策略。</p>
 	 * Return the name of the current transaction, or {@code null} if none set.
 	 * To be called by resource management code for optimizations per use case,
 	 * for example to optimize fetch strategies for specific named transactions.
@@ -460,6 +482,7 @@ public abstract class TransactionSynchronizationManager {
 
 
 	/**
+	 * <p>清除当前线程的整个事务同步状态:已注册的同步以及各种事务特征。</p>
 	 * Clear the entire transaction synchronization state for the current thread:
 	 * registered synchronizations as well as the various transaction characteristics.
 	 * @see #clearSynchronization()

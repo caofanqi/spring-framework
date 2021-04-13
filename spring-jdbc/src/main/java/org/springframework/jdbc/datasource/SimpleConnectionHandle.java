@@ -21,6 +21,8 @@ import java.sql.Connection;
 import org.springframework.util.Assert;
 
 /**
+ * <p>ConnectionHandle接口的简单实现，包含一个给定的JDBC连接。</p>
+ *
  * Simple implementation of the {@link ConnectionHandle} interface,
  * containing a given JDBC Connection.
  *

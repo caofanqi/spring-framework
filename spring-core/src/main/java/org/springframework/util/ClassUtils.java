@@ -1041,6 +1041,8 @@ public abstract class ClassUtils {
 	}
 
 	/**
+	 * <p>返回给定方法的限定名，由完全限定接口/类名+“.”+方法名组成。</p>
+	 *
 	 * Return the qualified name of the given method, consisting of
 	 * fully qualified interface/class name + "." + method name.
 	 * @param method the method

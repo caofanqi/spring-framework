@@ -23,6 +23,9 @@ import org.springframework.lang.Nullable;
 import org.springframework.transaction.support.DelegatingTransactionDefinition;
 
 /**
+ * <p>TransactionAttribute实现，它将所有调用委托给给定的目标TransactionAttribute实例。
+ * 抽象，因为它意味着要子类化，子类覆盖特定的方法，这些方法不应该简单地委托给目标实例。</p>
+ *
  * {@link TransactionAttribute} implementation that delegates all calls to a given target
  * {@link TransactionAttribute} instance. Abstract because it is meant to be subclassed,
  * with subclasses overriding specific methods that are not supposed to simply delegate

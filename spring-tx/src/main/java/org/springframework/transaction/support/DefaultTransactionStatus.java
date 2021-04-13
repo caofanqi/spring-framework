@@ -22,17 +22,23 @@ import org.springframework.transaction.SavepointManager;
 import org.springframework.util.Assert;
 
 /**
+ * <p>AbstractPlatformTransactionManager使用的TransactionStatus接口的默认实现。基于基础“事务对象”的概念。</p>
+ *
  * Default implementation of the {@link org.springframework.transaction.TransactionStatus}
  * interface, used by {@link AbstractPlatformTransactionManager}. Based on the concept
  * of an underlying "transaction object".
  *
+ * <p>保存AbstractPlatformTransactionManager内部需要的所有状态信息，包括由具体事务管理器实现确定的通用事务对象。</p>
  * <p>Holds all status information that {@link AbstractPlatformTransactionManager}
  * needs internally, including a generic transaction object determined by the
  * concrete transaction manager implementation.
  *
+ * <p>支持将savepoint-related方法委托给实现SavepointManager接口的事务对象。</p>
  * <p>Supports delegating savepoint-related methods to a transaction object
  * that implements the {@link SavepointManager} interface.
  *
+ * <p>注意:这并不打算与其他PlatformTransactionManager实现一起使用，特别是对于测试环境中的模拟事务管理器。
+ * 使用可选的SimpleTransactionStatus类或简单的TransactionStatus接口的模拟代替。</p>
  * <p><b>NOTE:</b> This is <i>not</i> intended for use with other PlatformTransactionManager
  * implementations, in particular not for mock transaction managers in testing environments.
  * Use the alternative {@link SimpleTransactionStatus} class or a mock for the plain
@@ -115,6 +121,7 @@ public class DefaultTransactionStatus extends AbstractTransactionStatus {
 	}
 
 	/**
+	 * <p>如果为该事务打开了新的事务同步，则返回。</p>
 	 * Return if a new transaction synchronization has been opened
 	 * for this transaction.
 	 */
@@ -166,6 +173,7 @@ public class DefaultTransactionStatus extends AbstractTransactionStatus {
 	}
 
 	/**
+	 * <p>这个实现公开了基础事务对象(如果有的话)的SavepointManager接口。</p>
 	 * This implementation exposes the {@link SavepointManager} interface
 	 * of the underlying transaction object, if any.
 	 * @throws NestedTransactionNotSupportedException if savepoints are not supported

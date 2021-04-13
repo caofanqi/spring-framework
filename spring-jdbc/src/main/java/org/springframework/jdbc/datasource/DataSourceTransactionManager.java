@@ -35,6 +35,9 @@ import org.springframework.transaction.support.TransactionSynchronizationUtils;
 import org.springframework.util.Assert;
 
 /**
+ * <p>一个JDBC DataSource的PlatformTransactionManager实现。
+ * 只要安装程序使用javax.sql.DataSource作为其连接工厂机制，该类就能够在任何环境中使用任何JDBC驱动程序工作。
+ * 将指定数据源的JDBC Connection绑定到当前线程，潜在地允许每个数据源有一个线程绑定连接。</p>
  * {@link org.springframework.transaction.PlatformTransactionManager}
  * implementation for a single JDBC {@link javax.sql.DataSource}. This class is
  * capable of working in any environment with any JDBC driver, as long as the setup
@@ -42,6 +45,9 @@ import org.springframework.util.Assert;
  * Binds a JDBC Connection from the specified DataSource to the current thread,
  * potentially allowing for one thread-bound Connection per DataSource.
  *
+ * <p>注意:此事务管理器操作的数据源需要返回独立的连接。连接可能来自池(典型的情况)，
+ * 但是数据源不能返回线程作用域/请求作用域的连接或类似的连接。该事务管理器将根据指
+ * 定的传播行为将连接与线程绑定事务本身关联起来。它假设即使在正在进行的事务中也可以获得一个独立的连接。</p>
  * <p><b>Note: The DataSource that this transaction manager operates on needs
  * to return independent Connections.</b> The Connections may come from a pool
  * (the typical case), but the DataSource must not return thread-scoped /
@@ -50,6 +56,9 @@ import org.springframework.util.Assert;
  * to the specified propagation behavior. It assumes that a separate,
  * independent Connection can be obtained even during an ongoing transaction.
  *
+ * <p>应用代码需要通过DataSourceUtils.getConnection(DataSource)获得一个JDBC链接，而不是标准的Java ee风格的
+ * DataSource.getConnection()。像JdbcTemplate这样的Spring类隐式地使用了这个策略。
+ * 如果没有与这个事务管理器结合使用，DataSourceUtils查找策略的行为与本地数据源查找完全相同;因此，它可以以一种便携的方式使用。</p>
  * <p>Application code is required to retrieve the JDBC Connection via
  * {@link DataSourceUtils#getConnection(DataSource)} instead of a standard
  * Java EE-style {@link DataSource#getConnection()} call. Spring classes such as
@@ -58,6 +67,9 @@ import org.springframework.util.Assert;
  * {@link DataSourceUtils} lookup strategy behaves exactly like the native
  * DataSource lookup; it can thus be used in a portable fashion.
  *
+ * <p>另外，您还可以允许应用程序代码使用标准的Java ee风格的查找模式DataSource.getConnection()，
+ * 例如对于根本不知道Spring的遗留代码。在这种情况下，为目标数据源定义一个TransactionAwareDataSourceProxy，
+ * 并将该代理数据源传递给dao, dao将在访问它时自动参与spring管理的事务。</p>
  * <p>Alternatively, you can allow application code to work with the standard
  * Java EE-style lookup pattern {@link DataSource#getConnection()}, for example for
  * legacy code that is not aware of Spring at all. In that case, define a
@@ -65,6 +77,9 @@ import org.springframework.util.Assert;
  * that proxy DataSource to your DAOs, which will automatically participate in
  * Spring-managed transactions when accessing it.
  *
+ * <p>支持自定义隔离级别，以及作为适当的JDBC语句超时应用的超时。
+ * 为了支持后者，应用程序代码必须使用JdbcTemplate,调用DataSourceUtils.applyTransactionTimeout为每个创建的JDBC语句应用。
+ * 或者使用TransactionAwareDataSourceProxy，它将自动创建感知超时的JDBC连接和语句。</p>
  * <p>Supports custom isolation levels, and timeouts which get applied as
  * appropriate JDBC statement timeouts. To support the latter, application code
  * must either use {@link org.springframework.jdbc.core.JdbcTemplate}, call
@@ -72,6 +87,9 @@ import org.springframework.util.Assert;
  * or go through a {@link TransactionAwareDataSourceProxy} which will create
  * timeout-aware JDBC Connections and Statements automatically.
  *
+ * <p>考虑为目标数据源定义一个LazyConnectionDataSourceProxy，将此事务管理器和DAOs都指向它。
+ * 这将导致对“空”事务的优化处理，即没有执行任何JDBC语句的事务。LazyConnectionDataSourceProxy将
+ * 不会从目标数据源获取实际的JDBC连接，直到执行一条语句，将指定的事务设置惰性地应用到目标连接。</p>
  * <p>Consider defining a {@link LazyConnectionDataSourceProxy} for your target
  * DataSource, pointing both this transaction manager and your DAOs to it.
  * This will lead to optimized handling of "empty" transactions, i.e. of transactions
@@ -79,12 +97,16 @@ import org.springframework.util.Assert;
  * an actual JDBC Connection from the target DataSource until a Statement gets executed,
  * lazily applying the specified transaction settings to the target Connection.
  *
+ * <p>这个事务管理器通过JDBC 3.0 java.sql.Savepoint机制支持嵌套事务。
+ * “nestedTransactionAllowed”标志默认为“true”，因为嵌套事务在支持保存点的JDBC驱动程序(如Oracle JDBC驱动程序)上可以不受限制地工作。</p>
  * <p>This transaction manager supports nested transactions via the JDBC 3.0
  * {@link java.sql.Savepoint} mechanism. The
  * {@link #setNestedTransactionAllowed "nestedTransactionAllowed"} flag defaults
  * to "true", since nested transactions will work without restrictions on JDBC
  * drivers that support savepoints (such as the Oracle JDBC driver).
  *
+ * <p>这个事务管理器可以用来作为替代JtaTransactionManager在单一资源的情况下,它不需要一个容器,支持JTA,
+ * 通常结合本地定义的JDBC数据源(例如Apache Commons DBCP连接池)。在本地策略和JTA环境之间切换只是一个配置问题!</p>
  * <p>This transaction manager can be used as a replacement for the
  * {@link org.springframework.transaction.jta.JtaTransactionManager} in the single
  * resource case, as it does not require a container that supports JTA, typically
@@ -92,12 +114,15 @@ import org.springframework.util.Assert;
  * DBCP connection pool). Switching between this local strategy and a JTA
  * environment is just a matter of configuration!
  *
+ * <p>从4.3.4开始，这个事务管理器在注册的事务同步上触发flush回调(如果同步通常是活动的)，
+ * 假设资源在底层JDBC连接上运行。这允许类似于JtaTransactionManager的设置，特别是对于惰性注册的ORM资源(例如Hibernate会话)。</p>
  * <p>As of 4.3.4, this transaction manager triggers flush callbacks on registered
  * transaction synchronizations (if synchronization is generally active), assuming
  * resources operating on the underlying JDBC {@code Connection}. This allows for
  * setup analogous to {@code JtaTransactionManager}, in particular with respect to
  * lazily registered ORM resources (e.g. a Hibernate {@code Session}).
  *
+ * <p>注意:从5.3开始，JdbcTransactionManager是一个扩展的子类，包含提交/回滚异常转换，与JdbcTemplate一致。</p>
  * <p><b>NOTE: As of 5.3, {@link org.springframework.jdbc.support.JdbcTransactionManager}
  * is available as an extended subclass which includes commit/rollback exception
  * translation, aligned with {@link org.springframework.jdbc.core.JdbcTemplate}.</b>
@@ -129,6 +154,7 @@ public class DataSourceTransactionManager extends AbstractPlatformTransactionMan
 	 * @see #setDataSource
 	 */
 	public DataSourceTransactionManager() {
+		// 设置允许嵌套事务
 		setNestedTransactionAllowed(true);
 	}
 
@@ -144,6 +170,7 @@ public class DataSourceTransactionManager extends AbstractPlatformTransactionMan
 
 
 	/**
+	 * <p>设置该实例应该为其管理事务的JDBC数据源。</p>
 	 * Set the JDBC DataSource that this instance should manage transactions for.
 	 * <p>This will typically be a locally defined DataSource, for example an
 	 * Apache Commons DBCP connection pool. Alternatively, you can also drive
@@ -174,6 +201,7 @@ public class DataSourceTransactionManager extends AbstractPlatformTransactionMan
 	}
 
 	/**
+	 * <p>返回此实例为其管理事务的JDBC数据源。</p>
 	 * Return the JDBC DataSource that this instance manages transactions for.
 	 */
 	@Nullable
@@ -182,6 +210,7 @@ public class DataSourceTransactionManager extends AbstractPlatformTransactionMan
 	}
 
 	/**
+	 * <p>请根据实际情况获取数据源。</p>
 	 * Obtain the DataSource for actual use.
 	 * @return the DataSource (never {@code null})
 	 * @throws IllegalStateException in case of no DataSource set
@@ -216,6 +245,7 @@ public class DataSourceTransactionManager extends AbstractPlatformTransactionMan
 	}
 
 	/**
+	 * <p>返回是否通过事务连接上的显式语句强制事务的只读性质。</p>
 	 * Return whether to enforce the read-only nature of a transaction
 	 * through an explicit statement on the transactional connection.
 	 * @since 4.3.7
@@ -240,10 +270,14 @@ public class DataSourceTransactionManager extends AbstractPlatformTransactionMan
 
 	@Override
 	protected Object doGetTransaction() {
+		// 创建一个事务对象
 		DataSourceTransactionObject txObject = new DataSourceTransactionObject();
+		// 通过是否允许嵌套事务，来设置是否允许保存点
 		txObject.setSavepointAllowed(isNestedTransactionAllowed());
+		// 如果当前线程已经记录数据库连接则使用原有连接
 		ConnectionHolder conHolder =
 				(ConnectionHolder) TransactionSynchronizationManager.getResource(obtainDataSource());
+		// false表示非新创建连接
 		txObject.setConnectionHolder(conHolder, false);
 		return txObject;
 	}
@@ -251,6 +285,7 @@ public class DataSourceTransactionManager extends AbstractPlatformTransactionMan
 	@Override
 	protected boolean isExistingTransaction(Object transaction) {
 		DataSourceTransactionObject txObject = (DataSourceTransactionObject) transaction;
+		// 通过事务对象中是否存在ConnectionHolder&&ConnectionHolder的事务是active的
 		return (txObject.hasConnectionHolder() && txObject.getConnectionHolder().isTransactionActive());
 	}
 
@@ -262,41 +297,56 @@ public class DataSourceTransactionManager extends AbstractPlatformTransactionMan
 		try {
 			if (!txObject.hasConnectionHolder() ||
 					txObject.getConnectionHolder().isSynchronizedWithTransaction()) {
+				// 获取一个JDBC链接对象
 				Connection newCon = obtainDataSource().getConnection();
 				if (logger.isDebugEnabled()) {
 					logger.debug("Acquired Connection [" + newCon + "] for JDBC transaction");
 				}
+				// 当前事务不存在ConnectionHolder，新初始化一个
 				txObject.setConnectionHolder(new ConnectionHolder(newCon), true);
 			}
 
+			// 将资源标记为与事务同步
 			txObject.getConnectionHolder().setSynchronizedWithTransaction(true);
+			// 获取JDBC链接对象
 			con = txObject.getConnectionHolder().getConnection();
 
+			// 对JDBC链接对象设置隔离级别，只读标识
 			Integer previousIsolationLevel = DataSourceUtils.prepareConnectionForTransaction(con, definition);
+			// 对事物对象设置隔离级别，只读标识
 			txObject.setPreviousIsolationLevel(previousIsolationLevel);
 			txObject.setReadOnly(definition.isReadOnly());
 
 			// Switch to manual commit if necessary. This is very expensive in some JDBC drivers,
 			// so we don't want to do it unnecessarily (for example if we've explicitly
 			// configured the connection pool to set it already).
+			/*
+			 * 如果需要，切换到手动提交。在某些JDBC驱动程序中，这是非常昂贵的，
+			 * 所以我们不想做不必要的事情（例如，如果我们显式地将连接池设置为已经设置）
+			 */
 			if (con.getAutoCommit()) {
 				txObject.setMustRestoreAutoCommit(true);
 				if (logger.isDebugEnabled()) {
 					logger.debug("Switching JDBC Connection [" + con + "] to manual commit");
 				}
+				// 如果当前JDBC链接自动提交是开启的，这里需要关闭
 				con.setAutoCommit(false);
 			}
 
+			// 预处理事务链接
 			prepareTransactionalConnection(con, definition);
+			// 将当前事务激活
 			txObject.getConnectionHolder().setTransactionActive(true);
 
 			int timeout = determineTimeout(definition);
 			if (timeout != TransactionDefinition.TIMEOUT_DEFAULT) {
+				// 设置超时时间
 				txObject.getConnectionHolder().setTimeoutInSeconds(timeout);
 			}
 
 			// Bind the connection holder to the thread.
 			if (txObject.isNewConnectionHolder()) {
+				// 是一个新的链接持有对象，将当前获取到的链接绑定到当前线程
 				TransactionSynchronizationManager.bindResource(obtainDataSource(), txObject.getConnectionHolder());
 			}
 		}
@@ -330,6 +380,7 @@ public class DataSourceTransactionManager extends AbstractPlatformTransactionMan
 			logger.debug("Committing JDBC transaction on Connection [" + con + "]");
 		}
 		try {
+			// 提交事务
 			con.commit();
 		}
 		catch (SQLException ex) {
@@ -340,11 +391,13 @@ public class DataSourceTransactionManager extends AbstractPlatformTransactionMan
 	@Override
 	protected void doRollback(DefaultTransactionStatus status) {
 		DataSourceTransactionObject txObject = (DataSourceTransactionObject) status.getTransaction();
+		// 获取到JDBC连接对象
 		Connection con = txObject.getConnectionHolder().getConnection();
 		if (status.isDebug()) {
 			logger.debug("Rolling back JDBC transaction on Connection [" + con + "]");
 		}
 		try {
+			// 回滚
 			con.rollback();
 		}
 		catch (SQLException ex) {
@@ -354,6 +407,7 @@ public class DataSourceTransactionManager extends AbstractPlatformTransactionMan
 
 	@Override
 	protected void doSetRollbackOnly(DefaultTransactionStatus status) {
+		// 设置一个归滚标识
 		DataSourceTransactionObject txObject = (DataSourceTransactionObject) status.getTransaction();
 		if (status.isDebug()) {
 			logger.debug("Setting JDBC transaction [" + txObject.getConnectionHolder().getConnection() +
@@ -368,10 +422,12 @@ public class DataSourceTransactionManager extends AbstractPlatformTransactionMan
 
 		// Remove the connection holder from the thread, if exposed.
 		if (txObject.isNewConnectionHolder()) {
+			// 将数据链接从当前前程中解除绑定
 			TransactionSynchronizationManager.unbindResource(obtainDataSource());
 		}
 
 		// Reset connection.
+		// 释放链接
 		Connection con = txObject.getConnectionHolder().getConnection();
 		try {
 			if (txObject.isMustRestoreAutoCommit()) {
@@ -388,6 +444,7 @@ public class DataSourceTransactionManager extends AbstractPlatformTransactionMan
 			if (logger.isDebugEnabled()) {
 				logger.debug("Releasing JDBC Connection [" + con + "] after transaction");
 			}
+			// 释放数据源
 			DataSourceUtils.releaseConnection(con, this.dataSource);
 		}
 
@@ -396,6 +453,7 @@ public class DataSourceTransactionManager extends AbstractPlatformTransactionMan
 
 
 	/**
+	 * <p>事务开始后立即准备事务连接。</p>
 	 * Prepare the transactional {@code Connection} right after transaction begin.
 	 * <p>The default implementation executes a "SET TRANSACTION READ ONLY" statement
 	 * if the {@link #setEnforceReadOnly "enforceReadOnly"} flag is set to {@code true}
@@ -437,6 +495,7 @@ public class DataSourceTransactionManager extends AbstractPlatformTransactionMan
 
 
 	/**
+	 * <p>数据源事务对象，表示一个ConnectionHolder。被DataSourceTransactionManager用作事务对象。</p>
 	 * DataSource transaction object, representing a ConnectionHolder.
 	 * Used as transaction object by DataSourceTransactionManager.
 	 */

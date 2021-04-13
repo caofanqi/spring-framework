@@ -22,6 +22,8 @@ import org.springframework.aop.support.AbstractBeanFactoryPointcutAdvisor;
 import org.springframework.lang.Nullable;
 
 /**
+ * <p>Advisor由TransactionAttributeSource驱动，用于包含事务性方法的事务建议bean。</p>
+ *
  * Advisor driven by a {@link TransactionAttributeSource}, used to include
  * a transaction advice bean for methods that are transactional.
  *
@@ -37,6 +39,9 @@ public class BeanFactoryTransactionAttributeSourceAdvisor extends AbstractBeanFa
 	@Nullable
 	private TransactionAttributeSource transactionAttributeSource;
 
+	/**
+	 * 持有一个TransactionAttributeSourcePointcut切入点
+	 */
 	private final TransactionAttributeSourcePointcut pointcut = new TransactionAttributeSourcePointcut() {
 		@Override
 		@Nullable
@@ -47,6 +52,8 @@ public class BeanFactoryTransactionAttributeSourceAdvisor extends AbstractBeanFa
 
 
 	/**
+	 * <p>设置用于查找事务属性的TransactionAttributeSource。这通常应该与事务拦截器本身上设置的源引用相同。</p>
+	 *
 	 * Set the transaction attribute source which is used to find transaction
 	 * attributes. This should usually be identical to the source reference
 	 * set on the transaction interceptor itself.

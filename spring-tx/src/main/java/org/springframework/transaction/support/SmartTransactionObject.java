@@ -19,10 +19,13 @@ package org.springframework.transaction.support;
 import java.io.Flushable;
 
 /**
+ * <p>由能够返回内部rollback-only标记的事务对象实现的接口，通常来自已参与并标记为rollback-only的另一个事务。</p>
+ *
  * Interface to be implemented by transaction objects that are able to
  * return an internal rollback-only marker, typically from a another
  * transaction that has participated and marked it as rollback-only.
  *
+ * <p>Autodetected by DefaultTransactionStatus，以始终返回当前rollbackOnly标志，即使不是由当前TransactionStatus产生的。</p>
  * <p>Autodetected by DefaultTransactionStatus, to always return a
  * current rollbackOnly flag even if not resulting from the current
  * TransactionStatus.

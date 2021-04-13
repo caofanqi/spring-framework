@@ -112,6 +112,7 @@ public class ConnectionHolder extends ResourceHolderSupport {
 	}
 
 	/**
+	 * <p>设置此占位符是否代表一个活动的、jdbc管理的事务</p>
 	 * Set whether this holder represents an active, JDBC-managed transaction.
 	 * @see DataSourceTransactionManager
 	 */
@@ -120,6 +121,7 @@ public class ConnectionHolder extends ResourceHolderSupport {
 	}
 
 	/**
+	 * <p>返回此holder是否代表一个活动的jdbc管理的事务。</p>
 	 * Return whether this holder represents an active, JDBC-managed transaction.
 	 */
 	protected boolean isTransactionActive() {
@@ -177,6 +179,7 @@ public class ConnectionHolder extends ResourceHolderSupport {
 	}
 
 	/**
+	 * <p>使用生成的保存点名称为当前连接创建一个新的JDBC 3.0保存点，该保存点对于连接是唯一的。</p>
 	 * Create a new JDBC 3.0 Savepoint for the current Connection,
 	 * using generated savepoint names that are unique for the Connection.
 	 * @return the new Savepoint

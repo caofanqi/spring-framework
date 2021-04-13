@@ -177,6 +177,7 @@ public abstract class AopUtils {
 	}
 
 	/**
+	 * <p>给定一个方法(可能来自接口)和当前AOP调用中使用的目标类，如果有相应的目标方法，请查找相应的目标方法。例如，方法可以是IFoo.bar()，目标类可以是DefaultFoo。</p>
 	 * Given a method, which may come from an interface, and a target class used
 	 * in the current AOP invocation, find the corresponding target method if there
 	 * is one. E.g. the method may be {@code IFoo.bar()} and the target class

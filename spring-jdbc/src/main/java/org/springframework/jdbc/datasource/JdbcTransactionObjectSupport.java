@@ -33,10 +33,12 @@ import org.springframework.transaction.support.SmartTransactionObject;
 import org.springframework.util.Assert;
 
 /**
+ * <p>方便的支持jdbc的事务对象基类。可以包含带有JDBC连接的ConnectionHolder，并基于该ConnectionHolder实现SavepointManager接口。</p>
  * Convenient base class for JDBC-aware transaction objects. Can contain a
  * {@link ConnectionHolder} with a JDBC {@code Connection}, and implements the
  * {@link SavepointManager} interface based on that {@code ConnectionHolder}.
  *
+ * <p>允许对JDBC保存点进行编程管理。DefaultTransactionStatus自动委托给它，因为它会自动检测实现SavepointManager接口的事务对象。</p>
  * <p>Allows for programmatic management of JDBC {@link java.sql.Savepoint Savepoints}.
  * Spring's {@link org.springframework.transaction.support.DefaultTransactionStatus}
  * automatically delegates to this, as it autodetects transaction objects which
@@ -63,6 +65,7 @@ public abstract class JdbcTransactionObjectSupport implements SavepointManager, 
 
 
 	/**
+	 * <p>设置此事务对象的ConnectionHolder</p>
 	 * Set the ConnectionHolder for this transaction object.
 	 */
 	public void setConnectionHolder(@Nullable ConnectionHolder connectionHolder) {
@@ -78,6 +81,7 @@ public abstract class JdbcTransactionObjectSupport implements SavepointManager, 
 	}
 
 	/**
+	 * <p>检查此事务对象是否具有ConnectionHolder</p>
 	 * Check whether this transaction object has a ConnectionHolder.
 	 */
 	public boolean hasConnectionHolder() {
@@ -117,6 +121,7 @@ public abstract class JdbcTransactionObjectSupport implements SavepointManager, 
 	}
 
 	/**
+	 * <p>设置该事务中是否允许保存点。默认为false。</p>
 	 * Set whether savepoints are allowed within this transaction.
 	 * The default is {@code false}.
 	 */
@@ -142,6 +147,7 @@ public abstract class JdbcTransactionObjectSupport implements SavepointManager, 
 	//---------------------------------------------------------------------
 
 	/**
+	 * <p>此实现创建JDBC 3.0保存点并返回它。</p>
 	 * This implementation creates a JDBC 3.0 Savepoint and returns it.
 	 * @see java.sql.Connection#setSavepoint
 	 */

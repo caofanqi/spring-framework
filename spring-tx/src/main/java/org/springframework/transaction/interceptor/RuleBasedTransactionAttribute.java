@@ -26,6 +26,10 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.lang.Nullable;
 
 /**
+ * <p>TransactionAttribute实现，通过应用大量的回滚规则(积极的和消极的)来确定给定的异常是否应该导致事务回滚。
+ * 如果没有应用自定义回滚规则，则此属性的行为类似DefaultTransactionAttribute(在运行时异常时回滚)。</p>
+ * <p>TransactionAttributeEditor创建此类的对象。</p>
+ *
  * TransactionAttribute implementation that works out whether a given exception
  * should cause transaction rollback by applying a number of rollback rules,
  * both positive and negative. If no custom rollback rules apply, this attribute

@@ -25,6 +25,8 @@ import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 
 /**
+ * <p>ImportSelector实现的方便基类，它基于注释(比如@Enable*注释)中的AdviceMode值选择导入。</p>
+ *
  * Convenient base class for {@link ImportSelector} implementations that select imports
  * based on an {@link AdviceMode} value from an annotation (such as the {@code @Enable*}
  * annotations).
@@ -36,12 +38,15 @@ import org.springframework.util.Assert;
 public abstract class AdviceModeImportSelector<A extends Annotation> implements ImportSelector {
 
 	/**
+	 * <p>默认的通知模式属性名。</p>
 	 * The default advice mode attribute name.
 	 */
 	public static final String DEFAULT_ADVICE_MODE_ATTRIBUTE_NAME = "mode";
 
 
 	/**
+	 * <p>由泛型类型A指定的注释的AdviceMode属性的名称。默认值是“mode”，但是子类可以重写以进行自定义。</p>
+	 *
 	 * The name of the {@link AdviceMode} attribute for the annotation specified by the
 	 * generic type {@code A}. The default is {@value #DEFAULT_ADVICE_MODE_ATTRIBUTE_NAME},
 	 * but subclasses may override in order to customize.
@@ -51,6 +56,10 @@ public abstract class AdviceModeImportSelector<A extends Annotation> implements 
 	}
 
 	/**
+	 * <p>该实现从泛型元数据解析注释的类型，并验证(a)注释实际上存在于导入@Configuration类上，
+	 * 以及(b)给定注释具有类型为AdviceMode的建议模式属性。</p>
+	 * <p>然后调用selectImports(AdviceMode)方法，允许具体实现以安全和方便的方式选择导入。</p>
+	 *
 	 * This implementation resolves the type of annotation from generic metadata and
 	 * validates that (a) the annotation is in fact present on the importing
 	 * {@code @Configuration} class and (b) that the given annotation has an
@@ -83,6 +92,9 @@ public abstract class AdviceModeImportSelector<A extends Annotation> implements 
 	}
 
 	/**
+	 * <p>根据给定的AdviceMode确定应该导入哪些类。</p>
+	 * <p>从这个方法返回null表明无法处理建议模式或未知，应该抛出IllegalArgumentException。</p>
+	 *
 	 * Determine which classes should be imported based on the given {@code AdviceMode}.
 	 * <p>Returning {@code null} from this method indicates that the {@code AdviceMode}
 	 * could not be handled or was unknown and that an {@code IllegalArgumentException}

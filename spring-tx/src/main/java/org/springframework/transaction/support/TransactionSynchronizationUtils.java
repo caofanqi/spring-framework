@@ -55,6 +55,7 @@ public abstract class TransactionSynchronizationUtils {
 	}
 
 	/**
+	 * <p>如果需要，打开给定的资源句柄;否则，按原样返回给定句柄。</p>
 	 * Unwrap the given resource handle if necessary; otherwise return
 	 * the given handle as-is.
 	 * @since 5.3.4
@@ -99,6 +100,7 @@ public abstract class TransactionSynchronizationUtils {
 	}
 
 	/**
+	 * <p>对所有当前注册的同步触发完成前回调。</p>
 	 * Trigger {@code beforeCompletion} callbacks on all currently registered synchronizations.
 	 * @see TransactionSynchronization#beforeCompletion()
 	 */

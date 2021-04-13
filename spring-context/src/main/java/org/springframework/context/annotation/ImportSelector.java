@@ -22,9 +22,13 @@ import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.lang.Nullable;
 
 /**
+ * <p>接口将由类型实现，这些类型确定应根据给定的选择条件导入哪个@Configuration类，通常是一个或多个注释属性。</p>
+ *
  * Interface to be implemented by types that determine which @{@link Configuration}
  * class(es) should be imported based on a given selection criteria, usually one or
  * more annotation attributes.
+ *
+ * <p>ImportSelector可以实现以下任何一个Aware接口，它们各自的方法将在selectImports之前被调用:</p>
  *
  * <p>An {@link ImportSelector} may implement any of the following
  * {@link org.springframework.beans.factory.Aware Aware} interfaces,
@@ -36,6 +40,8 @@ import org.springframework.lang.Nullable;
  * <li>{@link org.springframework.context.ResourceLoaderAware ResourceLoaderAware}</li>
  * </ul>
  *
+ * <p>另外，该类也可以提供一个具有以下一个或多个受支持的形参类型的构造函数:</p>
+ *
  * <p>Alternatively, the class may provide a single constructor with one or more of
  * the following supported parameter types:
  * <ul>
@@ -44,6 +50,9 @@ import org.springframework.lang.Nullable;
  * <li>{@link java.lang.ClassLoader ClassLoader}</li>
  * <li>{@link org.springframework.core.io.ResourceLoader ResourceLoader}</li>
  * </ul>
+ *
+ * <p>ImportSelector实现的处理方式通常与常规的@Import注释相同，但是，也可以推迟对导入的选择，
+ * 直到处理完所有的@Configuration类(有关详细信息，请参阅DeferredImportSelector)。</p>
  *
  * <p>{@code ImportSelector} implementations are usually processed in the same way
  * as regular {@code @Import} annotations, however, it is also possible to defer
@@ -61,6 +70,8 @@ import org.springframework.lang.Nullable;
 public interface ImportSelector {
 
 	/**
+	 * <p>根据导入@Configuration类的AnnotationMetadata选择并返回应该导入的类的名称。</p>
+	 *
 	 * Select and return the names of which class(es) should be imported based on
 	 * the {@link AnnotationMetadata} of the importing @{@link Configuration} class.
 	 * @return the class names, or an empty array if none
@@ -68,6 +79,9 @@ public interface ImportSelector {
 	String[] selectImports(AnnotationMetadata importingClassMetadata);
 
 	/**
+	 * <p>返回从导入候选对象中排除类的谓词，并将其应用于通过该选择器的导入找到的所有类。</p>
+	 * <p>如果此谓词对于给定的完全限定类名返回true，则该类将不会被视为导入的配置类，从而绕过类文件加载和元数据内省。</p>
+	 *
 	 * Return a predicate for excluding classes from the import candidates, to be
 	 * transitively applied to all classes found through this selector's imports.
 	 * <p>If this predicate returns {@code true} for a given fully-qualified

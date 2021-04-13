@@ -32,6 +32,14 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionManager;
 
 /**
+ * <p>使用公共Spring事务基础设施(PlatformTransactionManager/ReactiveTransactionManager)进行
+ * 声明性事务管理的AOP Alliance MethodInterceptor。</p>
+ *
+ * <p>派生自TransactionAspectSupport类，该类包含与Spring的底层事务API的集成。
+ * TransactionInterceptor只是以正确的顺序调用相关的超类方法，比如invokeWithinTransaction。</p>
+ *
+ * <p>TransactionInterceptors是线程安全的。</p>
+ *
  * AOP Alliance MethodInterceptor for declarative transaction
  * management using the common Spring transaction infrastructure
  * ({@link org.springframework.transaction.PlatformTransactionManager}/
@@ -113,9 +121,11 @@ public class TransactionInterceptor extends TransactionAspectSupport implements 
 		// Work out the target class: may be {@code null}.
 		// The TransactionAttributeSource should be passed the target class
 		// as well as the method, which may be from an interface.
+		// 获取目标类
 		Class<?> targetClass = (invocation.getThis() != null ? AopUtils.getTargetClass(invocation.getThis()) : null);
 
 		// Adapt to TransactionAspectSupport's invokeWithinTransaction...
+		// 适配父类TransactionAspectSupport的invokeWithinTransaction方法
 		return invokeWithinTransaction(invocation.getMethod(), targetClass, new CoroutinesInvocationCallback() {
 			@Override
 			@Nullable

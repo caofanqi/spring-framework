@@ -13,7 +13,7 @@ public class AnnotationConfigApplicationContextClient {
 	public static void main(String[] args) {
 		AnnotationConfigApplicationContext applicationContext = new AnnotationConfigApplicationContext(AppConfig.class);
 		UserService userService = applicationContext.getBean(UserService.class);
-		userService.save(new User("zhangsan", 23));
+		userService.save(new User("zhangsan", 23, User.MAN));
 
 
 		EntitlementCalculationService entitlementCalculationService =
