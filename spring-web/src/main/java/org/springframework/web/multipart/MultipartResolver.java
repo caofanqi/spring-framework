@@ -85,6 +85,8 @@ import javax.servlet.http.HttpServletRequest;
 public interface MultipartResolver {
 
 	/**
+	 * <p>确定给定请求是否包含多部分内容。</p>
+	 * <p>通常会检查content type “multipart/form-data”，但实际接受的请求可能取决于解析器实现的能力。</p>
 	 * Determine if the given request contains multipart content.
 	 * <p>Will typically check for content type "multipart/form-data", but the actually
 	 * accepted requests might depend on the capabilities of the resolver implementation.

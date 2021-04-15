@@ -47,6 +47,7 @@ import org.springframework.util.LinkedCaseInsensitiveMap;
 import org.springframework.util.StringUtils;
 
 /**
+ * <p>基于HttpServletRequest的ServerHttpRequest实现。</p>
  * {@link ServerHttpRequest} implementation that is based on a {@link HttpServletRequest}.
  *
  * @author Arjen Poutsma

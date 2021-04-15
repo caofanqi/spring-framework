@@ -333,6 +333,7 @@ public class UriComponentsBuilder implements UriBuilder, Cloneable {
 	}
 
 	/**
+	 * <p>将第一个"Forwarded: for=..."或"X-Forwarded-For"头值解析为表示客户端地址的InetSocketAddress。</p>
 	 * Parse the first "Forwarded: for=..." or "X-Forwarded-For" header value to
 	 * an {@code InetSocketAddress} representing the address of the client.
 	 * @param request a request with headers that may contain forwarded headers

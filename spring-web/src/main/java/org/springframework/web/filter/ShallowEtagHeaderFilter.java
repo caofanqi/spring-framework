@@ -37,15 +37,19 @@ import org.springframework.web.util.ContentCachingResponseWrapper;
 import org.springframework.web.util.WebUtils;
 
 /**
+ * <p>filter根据响应上的内容生成一个ETag值。这个ETag与请求的If-None-Match头进行比较。
+ * 如果这些头相等，则不发送响应内容，而是发送304“not Modified”状态。</p>
  * {@link javax.servlet.Filter} that generates an {@code ETag} value based on the
  * content on the response. This ETag is compared to the {@code If-None-Match}
  * header of the request. If these headers are equal, the response content is
  * not sent, but rather a {@code 304 "Not Modified"} status instead.
  *
+ * <p>由于ETag是基于响应内容的，所以响应(例如View)仍然会被呈现。因此，这个过滤器只节省带宽，而不是服务器性能。</p>
  * <p>Since the ETag is based on the response content, the response
  * (e.g. a {@link org.springframework.web.servlet.View}) is still rendered.
  * As such, this filter only saves bandwidth, not server performance.
  *
+ * <p>注意:从Spring Framework 5.0开始，该过滤器使用基于Servlet 3.1 API构建的请求/响应装饰器。</p>
  * <p><b>NOTE:</b> As of Spring Framework 5.0, this filter uses request/response
  * decorators built on the Servlet 3.1 API.
  *
@@ -100,6 +104,8 @@ public class ShallowEtagHeaderFilter extends OncePerRequestFilter {
 
 		HttpServletResponse responseToUse = response;
 		if (!isAsyncDispatch(request) && !(response instanceof ConditionalContentCachingResponseWrapper)) {
+			// 请求不是异步并且，相应不是ConditionalContentCachingResponseWrapper类型
+			// 使用ConditionalContentCachingResponseWrapper包装
 			responseToUse = new ConditionalContentCachingResponseWrapper(response, request);
 		}
 
@@ -200,6 +206,7 @@ public class ShallowEtagHeaderFilter extends OncePerRequestFilter {
 
 
 	/**
+	 * <p>如果isContentCachingDisabled，返回原始的输出流，而不是进行缓存的输出流。</p>
 	 * Returns the raw OutputStream, instead of the one that does caching,
 	 * if {@link #isContentCachingDisabled}.
 	 */

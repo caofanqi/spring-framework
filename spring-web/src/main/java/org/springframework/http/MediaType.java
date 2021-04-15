@@ -36,6 +36,7 @@ import org.springframework.util.MimeTypeUtils;
 import org.springframework.util.StringUtils;
 
 /**
+ * <p>MimeType的一个子类，它添加了对HTTP规范中定义的质量参数的支持。</p>
  * A subclass of {@link MimeType} that adds support for quality parameters
  * as defined in the HTTP specification.
  *

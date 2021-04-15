@@ -20,6 +20,8 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
+ * <p>表示一个HTTP输入消息，由报头和可读正文组成。</p>
+ * <p>通常由服务器端的HTTP请求句柄或客户端的HTTP响应句柄实现。</p>
  * Represents an HTTP input message, consisting of {@linkplain #getHeaders() headers}
  * and a readable {@linkplain #getBody() body}.
  *

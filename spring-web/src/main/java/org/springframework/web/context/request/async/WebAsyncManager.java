@@ -190,6 +190,7 @@ public final class WebAsyncManager {
 	}
 
 	/**
+	 * <p>在给定的键下注册一个CallableProcessingInterceptor。</p>
 	 * Register a {@link CallableProcessingInterceptor} under the given key.
 	 * @param key the key
 	 * @param interceptor the interceptor to register

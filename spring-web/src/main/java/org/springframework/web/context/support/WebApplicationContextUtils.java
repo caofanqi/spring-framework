@@ -102,6 +102,7 @@ public abstract class WebApplicationContextUtils {
 	}
 
 	/**
+	 * <p>找到这个web应用程序的自定义WebApplicationContext。</p>
 	 * Find a custom {@code WebApplicationContext} for this web app.
 	 * @param sc the ServletContext to find the web application context for
 	 * @param attrName the name of the ServletContext attribute to look for

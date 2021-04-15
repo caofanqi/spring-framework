@@ -47,6 +47,8 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
 
 /**
+ * <p>为HTTP PUT、PATCH和DELETE请求解析表单数据并将其公开为Servlet请求参数的过滤器。默认情况下，Servlet规范只要求HTTP POST这样做。</p>
+ *
  * {@code Filter} that parses form data for HTTP PUT, PATCH, and DELETE requests
  * and exposes it as Servlet request parameters. By default the Servlet spec
  * only requires this for HTTP POST.
@@ -85,8 +87,10 @@ public class FormContentFilter extends OncePerRequestFilter {
 			HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
 
+		// 如果符合条件，解析请求中的参数
 		MultiValueMap<String, String> params = parseIfNecessary(request);
 		if (!CollectionUtils.isEmpty(params)) {
+			// 构建一个FormContentRequestWrapper继续执行下一个过滤器
 			filterChain.doFilter(new FormContentRequestWrapper(request, params), response);
 		}
 		else {
@@ -96,6 +100,7 @@ public class FormContentFilter extends OncePerRequestFilter {
 
 	@Nullable
 	private MultiValueMap<String, String> parseIfNecessary(HttpServletRequest request) throws IOException {
+		// 判断是否应该解析
 		if (!shouldParse(request)) {
 			return null;
 		}
@@ -106,6 +111,7 @@ public class FormContentFilter extends OncePerRequestFilter {
 				return request.getInputStream();
 			}
 		};
+		// 转换
 		return this.formConverter.read(null, inputMessage);
 	}
 
@@ -113,7 +119,9 @@ public class FormContentFilter extends OncePerRequestFilter {
 		String contentType = request.getContentType();
 		String method = request.getMethod();
 		if (StringUtils.hasLength(contentType) && HTTP_METHODS.contains(method)) {
+			// 有contentType并且httpMethod是"PUT", "PATCH", "DELETE"中的一种
 			try {
+				// 解析mediaType
 				MediaType mediaType = MediaType.parseMediaType(contentType);
 				return MediaType.APPLICATION_FORM_URLENCODED.includes(mediaType);
 			}

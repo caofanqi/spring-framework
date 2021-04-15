@@ -118,6 +118,7 @@ public abstract class AbstractHandlerMapping extends WebApplicationObjectSupport
 	}
 
 	/**
+	 * <p>返回此处理程序映射的默认处理程序，如果为none则为null。</p>
 	 * Return the default handler for this handler mapping,
 	 * or {@code null} if none.
 	 */
@@ -486,6 +487,7 @@ public abstract class AbstractHandlerMapping extends WebApplicationObjectSupport
 	}
 
 	/**
+	 * <p>查找给定请求的handler，如果找不到特定的handler，则退回到默认handler。</p>
 	 * Look up a handler for the given request, falling back to the default
 	 * handler if no specific one is found.
 	 * @param request current HTTP request
@@ -495,24 +497,30 @@ public abstract class AbstractHandlerMapping extends WebApplicationObjectSupport
 	@Override
 	@Nullable
 	public final HandlerExecutionChain getHandler(HttpServletRequest request) throws Exception {
+		// 根据request获取handler
 		Object handler = getHandlerInternal(request);
 		if (handler == null) {
+			// 如果没有找到，返回默认的handler。
 			handler = getDefaultHandler();
 		}
 		if (handler == null) {
+			// 如果默认的也没有配置，返回null
 			return null;
 		}
 		// Bean name or resolved handler?
 		if (handler instanceof String) {
+			// 如果获取到的是beanName，从容器中获取该bean
 			String handlerName = (String) handler;
 			handler = obtainApplicationContext().getBean(handlerName);
 		}
 
 		// Ensure presence of cached lookupPath for interceptors and others
+		// 确保拦截器和其他缓存的查找路径的存在
 		if (!ServletRequestPathUtils.hasCachedPath(request)) {
 			initLookupPath(request);
 		}
 
+		// 使用handler与符合该请求的拦截器构建一个HandlerExecutionChain
 		HandlerExecutionChain executionChain = getHandlerExecutionChain(handler, request);
 
 		if (logger.isTraceEnabled()) {
@@ -522,6 +530,7 @@ public abstract class AbstractHandlerMapping extends WebApplicationObjectSupport
 			logger.debug("Mapped to " + executionChain.getHandler());
 		}
 
+		//Cors处理
 		if (hasCorsConfigurationSource(handler) || CorsUtils.isPreFlightRequest(request)) {
 			CorsConfiguration config = getCorsConfiguration(handler, request);
 			if (getCorsConfigurationSource() != null) {
@@ -557,6 +566,7 @@ public abstract class AbstractHandlerMapping extends WebApplicationObjectSupport
 	protected abstract Object getHandlerInternal(HttpServletRequest request) throws Exception;
 
 	/**
+	 * <p>初始化用于请求映射的路径。</p>
 	 * Initialize the path to use for request mapping.
 	 * <p>When parsed patterns are {@link #usesPathPatterns() enabled} a parsed
 	 * {@code RequestPath} is expected to have been
@@ -581,6 +591,7 @@ public abstract class AbstractHandlerMapping extends WebApplicationObjectSupport
 	}
 
 	/**
+	 * <p>为给定的handler构建一个HandlerExecutionChain，包括适用的拦截器。</p>
 	 * Build a {@link HandlerExecutionChain} for the given handler, including
 	 * applicable interceptors.
 	 * <p>The default implementation builds a standard {@link HandlerExecutionChain}
@@ -619,6 +630,7 @@ public abstract class AbstractHandlerMapping extends WebApplicationObjectSupport
 	}
 
 	/**
+	 * <p>如果这个处理器有CorsConfigurationSource则返回true。</p>
 	 * Return {@code true} if there is a {@link CorsConfigurationSource} for this handler.
 	 * @since 5.2
 	 */

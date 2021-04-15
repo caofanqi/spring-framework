@@ -55,10 +55,15 @@ import org.springframework.web.util.UrlPathHelper;
 import org.springframework.web.util.pattern.PathPatternParser;
 
 /**
+ * <p>从@Controller类中的类型和方法级@RequestMapping注释创建RequestMappingInfo实例。</p>
+ *
  * Creates {@link RequestMappingInfo} instances from type and method-level
  * {@link RequestMapping @RequestMapping} annotations in
  * {@link Controller @Controller} classes.
  *
+ * <p>弃用注意:
+ * 在5.2.4中，useSuffixPatternMatch和useRegisteredSuffixPatternMatch已弃用，
+ * 以阻止使用路径扩展来进行请求映射和内容协商(在ContentNegotiationManagerFactoryBean中也有类似的弃用)。欲知详情，请阅读第24719期。</p>
  * <p><strong>Deprecation Note:</strong></p> In 5.2.4,
  * {@link #setUseSuffixPatternMatch(boolean) useSuffixPatternMatch} and
  * {@link #setUseRegisteredSuffixPatternMatch(boolean) useRegisteredSuffixPatternMatch}
@@ -228,6 +233,7 @@ public class RequestMappingHandlerMapping extends RequestMappingInfoHandlerMappi
 	}
 
 	/**
+	 * <p>是否匹配url，而不管末尾是否有斜杠</p>
 	 * Whether to match to URLs irrespective of the presence of a trailing slash.
 	 */
 	public boolean useTrailingSlashMatch() {
@@ -248,6 +254,7 @@ public class RequestMappingHandlerMapping extends RequestMappingInfoHandlerMappi
 
 
 	/**
+	 * <p>期望处理程序具有类型级的@Controller注释或类型级的@RequestMapping注释。</p>
 	 * {@inheritDoc}
 	 * <p>Expects a handler to have either a type-level @{@link Controller}
 	 * annotation or a type-level @{@link RequestMapping} annotation.
@@ -259,6 +266,7 @@ public class RequestMappingHandlerMapping extends RequestMappingInfoHandlerMappi
 	}
 
 	/**
+	 * <p>使用方法和类型级别的@RequestMapping注释来创建RequestMappingInfo。</p>
 	 * Uses method and type-level @{@link RequestMapping} annotations to create
 	 * the RequestMappingInfo.
 	 * @return the created RequestMappingInfo, or {@code null} if the method
@@ -298,6 +306,8 @@ public class RequestMappingHandlerMapping extends RequestMappingInfoHandlerMappi
 	}
 
 	/**
+	 * <p>委托给createRequestMappingInfo(RequestMapping, RequestCondition)，
+	 * 根据所提供的annotatedElement是类还是方法提供适当的自定义RequestCondition。</p>
 	 * Delegates to {@link #createRequestMappingInfo(RequestMapping, RequestCondition)},
 	 * supplying the appropriate custom {@link RequestCondition} depending on whether
 	 * the supplied {@code annotatedElement} is a class or method.

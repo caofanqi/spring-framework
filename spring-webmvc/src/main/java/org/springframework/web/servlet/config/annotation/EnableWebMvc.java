@@ -25,6 +25,7 @@ import java.lang.annotation.Target;
 import org.springframework.context.annotation.Import;
 
 /**
+ * <p>将此注释添加到@Configuration类中，将从WebMvcConfigurationSupport导入Spring MVC配置，例如:</p>
  * Adding this annotation to an {@code @Configuration} class imports the Spring MVC
  * configuration from {@link WebMvcConfigurationSupport}, e.g.:
  *
@@ -37,6 +38,7 @@ import org.springframework.context.annotation.Import;
  * }
  * </pre>
  *
+ * <p>要自定义导入的配置，请实现WebMvcConfigurer接口并覆盖各个方法，例如:</p>
  * <p>To customize the imported configuration, implement the interface
  * {@link WebMvcConfigurer} and override individual methods, e.g.:
  *
@@ -59,12 +61,16 @@ import org.springframework.context.annotation.Import;
  * }
  * </pre>
  *
+ * <p>注意:只有一个@Configuration类可以使用@EnableWebMvc注释来导入Spring Web MVC配置。
+ * 但是，为了定制所提供的配置，可以有多个@Configuration类实现WebMvcConfigurer。</p>
  * <p><strong>Note:</strong> only one {@code @Configuration} class may have the
  * {@code @EnableWebMvc} annotation to import the Spring Web MVC
  * configuration. There can however be multiple {@code @Configuration} classes
  * implementing {@code WebMvcConfigurer} in order to customize the provided
  * configuration.
  *
+ * <p>如果WebMvcConfigurer没有公开一些更高级的需要配置的设置，考虑删除@EnableWebMvc注释，
+ * 并直接从WebMvcConfigurationSupport或DelegatingWebMvcConfiguration扩展，例如:</p>
  * <p>If {@link WebMvcConfigurer} does not expose some more advanced setting that
  * needs to be configured consider removing the {@code @EnableWebMvc}
  * annotation and extending directly from {@link WebMvcConfigurationSupport}

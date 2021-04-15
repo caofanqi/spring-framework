@@ -280,6 +280,8 @@ public class ControllerAdviceBean implements Ordered {
 
 
 	/**
+	 * <p>在给定的ApplicationContext中找到带@ControllerAdvice注释的bean，并将它们包装为ControllerAdviceBean实例。</p>
+	 * <p>从Spring Framework 5.2开始，返回列表中的ControllerAdviceBean实例使用OrderComparator.sort(list)进行排序。</p>
 	 * Find beans annotated with {@link ControllerAdvice @ControllerAdvice} in the
 	 * given {@link ApplicationContext} and wrap them as {@code ControllerAdviceBean}
 	 * instances.

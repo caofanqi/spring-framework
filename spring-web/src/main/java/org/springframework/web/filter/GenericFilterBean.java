@@ -53,19 +53,25 @@ import org.springframework.web.context.support.StandardServletEnvironment;
 import org.springframework.web.util.NestedServletException;
 
 /**
+ * <p>Filter的简单基本实现，它将其配置参数(web.xml中的Filter标记中的init-param项)作为bean属性处理。</p>
  * Simple base implementation of {@link javax.servlet.Filter} which treats
  * its config parameters ({@code init-param} entries within the
  * {@code filter} tag in {@code web.xml}) as bean properties.
  *
+ * <p>任何类型的过滤器的一个方便的超类。配置参数的类型转换是自动的，使用转换后的值调用相应的setter方法。
+ * 子类也可以指定所需的属性。不匹配bean属性setter的参数将被忽略。</p>
  * <p>A handy superclass for any type of filter. Type conversion of config
  * parameters is automatic, with the corresponding setter method getting
  * invoked with the converted value. It is also possible for subclasses to
  * specify required properties. Parameters without matching bean property
  * setter will simply be ignored.
  *
+ * <p>这个filter将实际过滤工作留给子类，子类必须实现Filter.doFilter方法。</p>
  * <p>This filter leaves actual filtering to subclasses, which have to
  * implement the {@link javax.servlet.Filter#doFilter} method.
  *
+ * <p>这个通用过滤器基类不依赖Spring的ApplicationContext概念。
+ * 过滤器通常不会加载它们自己的上下文，而是通过过滤器的ServletContext访问Spring根应用上下文中的服务bean(参见WebApplicationContextUtils)。</p>
  * <p>This generic filter base class has no dependency on the Spring
  * {@link org.springframework.context.ApplicationContext} concept.
  * Filters usually don't load their own context but rather access service
@@ -101,6 +107,8 @@ public abstract class GenericFilterBean implements Filter, BeanNameAware, Enviro
 
 
 	/**
+	 * <p>存储Spring bean工厂中定义的bean名称。</p>
+	 * <p>仅在初始化为bean的情况下相关，使用一个名称作为过滤器名称的回退，通常由FilterConfig实例提供。</p>
 	 * Stores the bean name as defined in the Spring bean factory.
 	 * <p>Only relevant in case of initialization as bean, to have a name as
 	 * fallback to the filter name usually provided by a FilterConfig instance.
@@ -113,6 +121,9 @@ public abstract class GenericFilterBean implements Filter, BeanNameAware, Enviro
 	}
 
 	/**
+	 * <p>设置此filter运行的环境。</p>
+	 * <p>这里设置的任何环境都会覆盖默认情况下提供的StandardServletEnvironment。</p>
+	 * <p>此环境对象仅用于解析传递到此filter的init-parameters的资源路径中的占位符。如果没有使用init-params，这个环境基本上可以忽略。</p>
 	 * Set the {@code Environment} that this filter runs in.
 	 * <p>Any environment set here overrides the {@link StandardServletEnvironment}
 	 * provided by default.
@@ -162,6 +173,8 @@ public abstract class GenericFilterBean implements Filter, BeanNameAware, Enviro
 	}
 
 	/**
+	 * <p>调用可能包含子类的自定义初始化的initFilterBean()方法。</p>
+	 * <p>只在初始化为bean的情况下相关，在这种情况下不会调用标准的init(FilterConfig)方法。</p>
 	 * Calls the {@code initFilterBean()} method that might
 	 * contain custom initialization of a subclass.
 	 * <p>Only relevant in case of initialization as bean, where the
@@ -175,6 +188,8 @@ public abstract class GenericFilterBean implements Filter, BeanNameAware, Enviro
 	}
 
 	/**
+	 * <p>子类可能会覆盖该选项以执行自定义filter关闭。</p>
+	 * <p>注意:这个方法将在Spring应用程序上下文中从标准过滤器销毁以及过滤器bean销毁中调用。此默认实现为空。</p>
 	 * Subclasses may override this to perform custom filter shutdown.
 	 * <p>Note: This method will be called from standard filter destruction
 	 * as well as filter bean destruction in a Spring application context.
@@ -186,6 +201,8 @@ public abstract class GenericFilterBean implements Filter, BeanNameAware, Enviro
 
 
 	/**
+	 * <p>子类可以调用这个方法来指定这个属性(必须与它们公开的JavaBean属性匹配)是必须的，并且必须作为配置参数提供。这应该从子类的构造函数中调用。</p>
+	 * <p>此方法仅适用于由FilterConfig实例驱动的传统初始化。</p>
 	 * Subclasses can invoke this method to specify that this property
 	 * (which must match a JavaBean property they expose) is mandatory,
 	 * and must be supplied as a config parameter. This should be called
@@ -199,6 +216,7 @@ public abstract class GenericFilterBean implements Filter, BeanNameAware, Enviro
 	}
 
 	/**
+	 * <p>初始化这个过滤器的标准方法。将配置参数映射到此筛选器的bean属性上，并调用子类初始化。</p>
 	 * Standard way of initializing this filter.
 	 * Map config parameters onto bean properties of this filter, and
 	 * invoke subclass initialization.
@@ -214,6 +232,7 @@ public abstract class GenericFilterBean implements Filter, BeanNameAware, Enviro
 		this.filterConfig = filterConfig;
 
 		// Set bean properties from init parameters.
+		// 从init参数设置bean属性。
 		PropertyValues pvs = new FilterConfigPropertyValues(filterConfig, this.requiredProperties);
 		if (!pvs.isEmpty()) {
 			try {
@@ -225,6 +244,7 @@ public abstract class GenericFilterBean implements Filter, BeanNameAware, Enviro
 				}
 				bw.registerCustomEditor(Resource.class, new ResourceEditor(resourceLoader, env));
 				initBeanWrapper(bw);
+				// 属性注入
 				bw.setPropertyValues(pvs, true);
 			}
 			catch (BeansException ex) {
@@ -236,6 +256,7 @@ public abstract class GenericFilterBean implements Filter, BeanNameAware, Enviro
 		}
 
 		// Let subclasses do whatever initialization they like.
+		// 让子类做任何它们喜欢的初始化。
 		initFilterBean();
 
 		if (logger.isDebugEnabled()) {
@@ -244,6 +265,8 @@ public abstract class GenericFilterBean implements Filter, BeanNameAware, Enviro
 	}
 
 	/**
+	 * <p>初始化这个GenericFilterBean的BeanWrapper，可能使用自定义编辑器。</p>
+	 * <p>默认实现为空。</p>
 	 * Initialize the BeanWrapper for this GenericFilterBean,
 	 * possibly with custom editors.
 	 * <p>This default implementation is empty.
@@ -255,6 +278,9 @@ public abstract class GenericFilterBean implements Filter, BeanNameAware, Enviro
 	}
 
 	/**
+	 * <p>子类可能会重写这个以执行自定义初始化。在调用此方法之前，将设置此过滤器的所有bean属性。</p>
+	 * <p>注意:这个方法将从标准的过滤器初始化以及Spring应用程序上下文中的过滤器bean初始化中调用。在这两种情况下，Filter name和ServletContext都是可用的。
+	 * 此默认实现为空。</p>
 	 * Subclasses may override this to perform custom initialization.
 	 * All bean properties of this filter will have been set before this
 	 * method is invoked.
@@ -324,6 +350,7 @@ public abstract class GenericFilterBean implements Filter, BeanNameAware, Enviro
 
 
 	/**
+	 * <p>PropertyValues实现从FilterConfig初始化参数创建。</p>
 	 * PropertyValues implementation created from FilterConfig init parameters.
 	 */
 	@SuppressWarnings("serial")

@@ -27,6 +27,9 @@ import org.springframework.lang.Nullable;
 import org.springframework.web.WebApplicationInitializer;
 
 /**
+ * <p>方便的在servlet上下文中注册ContextLoaderListener的WebApplicationInitializer实现基类。</p>
+ * <p>子类需要实现的惟一方法是createRootApplicationContext()，它从registerContextLoaderListener(ServletContext)调用。</p>
+ *
  * Convenient base class for {@link WebApplicationInitializer} implementations
  * that register a {@link ContextLoaderListener} in the servlet context.
  *
@@ -51,6 +54,8 @@ public abstract class AbstractContextLoaderInitializer implements WebApplication
 	}
 
 	/**
+	 * <p>针对给定的servlet上下文注册ContextLoaderListener。
+	 * ContextLoaderListener使用从createRootApplicationContext()模板方法返回的应用程序上下文进行初始化。</p>
 	 * Register a {@link ContextLoaderListener} against the given servlet context. The
 	 * {@code ContextLoaderListener} is initialized with the application context returned
 	 * from the {@link #createRootApplicationContext()} template method.
@@ -59,8 +64,10 @@ public abstract class AbstractContextLoaderInitializer implements WebApplication
 	protected void registerContextLoaderListener(ServletContext servletContext) {
 		WebApplicationContext rootAppContext = createRootApplicationContext();
 		if (rootAppContext != null) {
+			// 如果子类提供了rootAppContext，配置ContextLoaderListener
 			ContextLoaderListener listener = new ContextLoaderListener(rootAppContext);
 			listener.setContextInitializers(getRootApplicationContextInitializers());
+			// 将此Listener添加到servlet上下文中
 			servletContext.addListener(listener);
 		}
 		else {
@@ -70,6 +77,9 @@ public abstract class AbstractContextLoaderInitializer implements WebApplication
 	}
 
 	/**
+	 * <p>创建提供给ContextLoaderListener的“根”应用程序上下文。</p>
+	 * <p>返回的上下文被委托给ContextLoaderListener.ContextLoaderListener(WebApplicationContext)，
+	 * 并将作为任何DispatcherServlet应用程序上下文的父上下文建立。因此，它通常包含中间层服务、数据源等。</p>
 	 * Create the "<strong>root</strong>" application context to be provided to the
 	 * {@code ContextLoaderListener}.
 	 * <p>The returned context is delegated to
@@ -84,6 +94,7 @@ public abstract class AbstractContextLoaderInitializer implements WebApplication
 	protected abstract WebApplicationContext createRootApplicationContext();
 
 	/**
+	 * <p>指定应用程序上下文初始化器，以应用于创建ContextLoaderListener的根应用程序上下文。</p>
 	 * Specify application context initializers to be applied to the root application
 	 * context that the {@code ContextLoaderListener} is being created with.
 	 * @since 4.2

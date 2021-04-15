@@ -113,6 +113,9 @@ import org.springframework.web.util.UrlPathHelper;
 import org.springframework.web.util.pattern.PathPatternParser;
 
 /**
+ * <p>这是提供MVC Java配置背后的配置的主类。它通常是通过添加@EnableWebMvc到application @Configuration类来导入的。
+ * 另一种更高级的选择是直接从这个类扩展，并在必要时覆盖方法，记住向子类添加@Configuration，向覆盖的@Bean方法添加@Bean。
+ * 更多细节请参见@EnableWebMvc的javadoc。</p>
  * This is the main class providing the configuration behind the MVC Java config.
  * It is typically imported by adding {@link EnableWebMvc @EnableWebMvc} to an
  * application {@link Configuration @Configuration} class. An alternative more
@@ -120,6 +123,16 @@ import org.springframework.web.util.pattern.PathPatternParser;
  * necessary, remembering to add {@link Configuration @Configuration} to the
  * subclass and {@link Bean @Bean} to overridden {@link Bean @Bean} methods.
  * For more details see the javadoc of {@link EnableWebMvc @EnableWebMvc}.
+ *
+ * <p>这个类注册了以下HandlerMapping:</p>
+ * <ul>
+ * <li>RequestMappingHandlerMapping,ordered为0，用于将请求映射到带注释的控制器方法
+ * <li>HandlerMapping, ordered为1.将URL路径直接映射到视图名称。
+ * <li>BeanNameUrlHandlerMapping,ordered为2将URL路径映射到控制器bean名称
+ * <li>RouterFunctionMapping,ordered为3 映射路由器功能。
+ * <li>HandlerMapping,ordered为Integer.MAX_VALUE-1为静态资源请求服务
+ * <li>HandlerMapping,ordered为{@code Integer.MAX_VALUE}将请求转发到默认servlet。
+ * </ul>
  *
  * <p>This class registers the following {@link HandlerMapping HandlerMappings}:</p>
  * <ul>
@@ -137,6 +150,13 @@ import org.springframework.web.util.pattern.PathPatternParser;
  * ordered at {@code Integer.MAX_VALUE} to forward requests to the default servlet.
  * </ul>
  *
+ * <p>注册以下HandlerAdapters:</p>
+ * <ul>
+ * <li>RequestMappingHandlerAdapter，用于使用带注释的控制器方法处理请求。
+ * <li>HttpRequestHandlerAdapter，使用HttpRequestHandlers处理请求。
+ * <li>SimpleControllerHandlerAdapter， 使用基于接口的Controller处理请求。
+ * </ul>
+ *
  * <p>Registers these {@link HandlerAdapter HandlerAdapters}:
  * <ul>
  * <li>{@link RequestMappingHandlerAdapter}
@@ -145,6 +165,13 @@ import org.springframework.web.util.pattern.PathPatternParser;
  * for processing requests with {@link HttpRequestHandler HttpRequestHandlers}.
  * <li>{@link SimpleControllerHandlerAdapter}
  * for processing requests with interface-based {@link Controller Controllers}.
+ * </ul>
+ *
+ *<p>用这个异常解析器链注册一个HandlerExceptionResolverComposite:</p>
+ * <ul>
+ * <li>ExceptionHandlerExceptionResolver,通过@ExceptionHandler方法处理异常.
+ * <li>ResponseStatusExceptionResolver,对于@ResponseStatus.
+ * <li>DefaultHandlerExceptionResolver， 用于解析已知的Spring异常类型
  * </ul>
  *
  * <p>Registers a {@link HandlerExceptionResolverComposite} with this chain of
@@ -158,6 +185,7 @@ import org.springframework.web.util.pattern.PathPatternParser;
  * exception types
  * </ul>
  *
+ * <p>注册一个AntPathMatcher和一个UrlPathHelper来使用:</p>
  * <p>Registers an {@link AntPathMatcher} and a {@link UrlPathHelper}
  * to be used by:
  * <ul>
@@ -165,8 +193,10 @@ import org.springframework.web.util.pattern.PathPatternParser;
  * <li>the {@link HandlerMapping} for ViewControllers
  * <li>and the {@link HandlerMapping} for serving resources
  * </ul>
+ * <p>请注意，这些bean可以使用PathMatchConfigurer进行配置。</p>
  * Note that those beans can be configured with a {@link PathMatchConfigurer}.
  *
+ * <p>RequestMappingHandlerAdapter和ExceptionHandlerExceptionResolver都配置了以下默认实例:</p>
  * <p>Both the {@link RequestMappingHandlerAdapter} and the
  * {@link ExceptionHandlerExceptionResolver} are configured with default
  * instances of the following by default:
@@ -296,6 +326,7 @@ public class WebMvcConfigurationSupport implements ApplicationContextAware, Serv
 
 
 	/**
+	 * <p>返回一个顺序为0的RequestMappingHandlerMapping，用于将请求映射到带注释的控制器。</p>
 	 * Return a {@link RequestMappingHandlerMapping} ordered at 0 for mapping
 	 * requests to annotated controllers.
 	 */
@@ -436,6 +467,7 @@ public class WebMvcConfigurationSupport implements ApplicationContextAware, Serv
 	}
 
 	/**
+	 * <p>返回一个ContentNegotiationManager实例，用于在给定的请求中确定所请求的媒体类型。</p>
 	 * Return a {@link ContentNegotiationManager} instance to use to determine
 	 * requested {@linkplain MediaType media types} in a given request.
 	 */

@@ -140,6 +140,7 @@ public abstract class HttpServletBean extends HttpServlet implements Environment
 	}
 
 	/**
+	 * <p>将配置参数映射到这个servlet的bean属性上，并调用子类初始化。</p>
 	 * Map config parameters onto bean properties of this servlet, and
 	 * invoke subclass initialization.
 	 * @throws ServletException if bean properties are invalid (or required
@@ -149,13 +150,24 @@ public abstract class HttpServletBean extends HttpServlet implements Environment
 	public final void init() throws ServletException {
 
 		// Set bean properties from init parameters.
+		// 从init参数设置bean属性。
+		// 解析init-param参数->封装为PropertyValues
 		PropertyValues pvs = new ServletConfigPropertyValues(getServletConfig(), this.requiredProperties);
 		if (!pvs.isEmpty()) {
 			try {
+				/*
+				 * 如果在web.xml中配置了对DispatcherServlet所在的<servlet>标签中配置了<init-param>，
+				 * 这里会将相关的属性配置注入到当前servlet中，例如：contextClass、contextConfigLocation等属性，
+				 * 都在FrameworkServlet中有相关的定义。也有相关属性在DispatcherServlet中定义（throwExceptionIfNoHandlerFound）。
+				 */
+				// 将当前servlet转换为BeanWrapper对象
 				BeanWrapper bw = PropertyAccessorFactory.forBeanPropertyAccess(this);
 				ResourceLoader resourceLoader = new ServletContextResourceLoader(getServletContext());
+				// 注册自定义属性编辑器，遇到Resource类型的属性时，使用该ResourceEditor进行解析
 				bw.registerCustomEditor(Resource.class, new ResourceEditor(resourceLoader, getEnvironment()));
+				// 空实现，子类可扩展
 				initBeanWrapper(bw);
+				// 属性注入
 				bw.setPropertyValues(pvs, true);
 			}
 			catch (BeansException ex) {
@@ -167,6 +179,7 @@ public abstract class HttpServletBean extends HttpServlet implements Environment
 		}
 
 		// Let subclasses do whatever initialization they like.
+		// 让子类做任何它们喜欢的初始化。
 		initServletBean();
 	}
 
@@ -204,6 +217,7 @@ public abstract class HttpServletBean extends HttpServlet implements Environment
 
 
 	/**
+	 * <p>PropertyValues实现从ServletConfig初始化参数创建。</p>
 	 * PropertyValues implementation created from ServletConfig init parameters.
 	 */
 	private static class ServletConfigPropertyValues extends MutablePropertyValues {

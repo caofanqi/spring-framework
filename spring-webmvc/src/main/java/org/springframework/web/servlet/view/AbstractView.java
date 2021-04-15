@@ -296,6 +296,7 @@ public abstract class AbstractView extends WebApplicationObjectSupport implement
 
 
 	/**
+	 * <p>准备给定指定模型的视图，如果需要，将其与静态属性和RequestContext属性合并。委托renderMergedOutputModel进行实际的呈现。</p>
 	 * Prepares the view given the specified model, merging it with static
 	 * attributes and a RequestContext attribute, if necessary.
 	 * Delegates to renderMergedOutputModel for the actual rendering.
@@ -313,10 +314,12 @@ public abstract class AbstractView extends WebApplicationObjectSupport implement
 
 		Map<String, Object> mergedModel = createMergedOutputModel(model, request, response);
 		prepareResponse(request, response);
+		//处理页面跳转
 		renderMergedOutputModel(mergedModel, getRequestToExpose(request), response);
 	}
 
 	/**
+	 * <p>创建一个包含动态值和静态属性的组合输出映射(永不为空)。动态值优先于静态属性。</p>
 	 * Creates a combined output Map (never {@code null}) that includes dynamic values and static attributes.
 	 * Dynamic values take precedence over static attributes.
 	 */

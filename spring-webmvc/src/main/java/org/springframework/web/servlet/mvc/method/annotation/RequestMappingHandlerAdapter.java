@@ -99,6 +99,10 @@ import org.springframework.web.servlet.support.RequestContextUtils;
 import org.springframework.web.util.WebUtils;
 
 /**
+ * <p>对AbstractHandlerMethodAdapter的扩展，它支持@RequestMapping带注释的HandlerMethods。</p>
+ * <p>对自定义参数和返回值类型的支持可以通过setCustomArgumentResolvers和setCustomReturnValueHandlers来添加，
+ * 或者，为了重新配置所有的参数和返回值类型，使用setArgumentResolvers和setReturnValueHandlers。</p>
+ *
  * Extension of {@link AbstractHandlerMethodAdapter} that supports
  * {@link RequestMapping @RequestMapping} annotated {@link HandlerMethod HandlerMethods}.
  *
@@ -566,9 +570,12 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 	@Override
 	public void afterPropertiesSet() {
 		// Do this first, it may add ResponseBody advice beans
+		// 首先这样做，它可能会添加ResponseBody建议bean
+		// 查找带有@ControllerAdvice注解的bean，并查找相关注解，添加到缓存
 		initControllerAdviceCache();
 
 		if (this.argumentResolvers == null) {
+			// 设置参数解析器
 			List<HandlerMethodArgumentResolver> resolvers = getDefaultArgumentResolvers();
 			this.argumentResolvers = new HandlerMethodArgumentResolverComposite().addResolvers(resolvers);
 		}
@@ -577,6 +584,7 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 			this.initBinderArgumentResolvers = new HandlerMethodArgumentResolverComposite().addResolvers(resolvers);
 		}
 		if (this.returnValueHandlers == null) {
+			// 设置返回值处理器
 			List<HandlerMethodReturnValueHandler> handlers = getDefaultReturnValueHandlers();
 			this.returnValueHandlers = new HandlerMethodReturnValueHandlerComposite().addHandlers(handlers);
 		}
@@ -587,6 +595,7 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 			return;
 		}
 
+		// 获取所有添加了@ControllerAdvice注解的bean
 		List<ControllerAdviceBean> adviceBeans = ControllerAdviceBean.findAnnotatedBeans(getApplicationContext());
 
 		List<Object> requestResponseBodyAdviceBeans = new ArrayList<>();
@@ -596,15 +605,18 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 			if (beanType == null) {
 				throw new IllegalStateException("Unresolvable type for ControllerAdviceBean: " + adviceBean);
 			}
+			// 查找带有@ModelAttribute注解的方法
 			Set<Method> attrMethods = MethodIntrospector.selectMethods(beanType, MODEL_ATTRIBUTE_METHODS);
 			if (!attrMethods.isEmpty()) {
 				this.modelAttributeAdviceCache.put(adviceBean, attrMethods);
 			}
+			// 查找带有@InitBinder注解的方法
 			Set<Method> binderMethods = MethodIntrospector.selectMethods(beanType, INIT_BINDER_METHODS);
 			if (!binderMethods.isEmpty()) {
 				this.initBinderAdviceCache.put(adviceBean, binderMethods);
 			}
 			if (RequestBodyAdvice.class.isAssignableFrom(beanType) || ResponseBodyAdvice.class.isAssignableFrom(beanType)) {
+				// 如果是RequestBodyAdvice或ResponseBodyAdvice类型
 				requestResponseBodyAdviceBeans.add(adviceBean);
 			}
 		}
@@ -638,6 +650,7 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 	}
 
 	/**
+	 * <p>返回要使用的参数解析器列表，包括内置解析器和通过setCustomArgumentResolvers提供的自定义解析器。</p>
 	 * Return the list of argument resolvers to use including built-in resolvers
 	 * and custom resolvers provided via {@link #setCustomArgumentResolvers}.
 	 */
@@ -645,6 +658,7 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 		List<HandlerMethodArgumentResolver> resolvers = new ArrayList<>(30);
 
 		// Annotation-based argument resolution
+		// 基于注解的参数解析
 		resolvers.add(new RequestParamMethodArgumentResolver(getBeanFactory(), false));
 		resolvers.add(new RequestParamMapMethodArgumentResolver());
 		resolvers.add(new PathVariableMethodArgumentResolver());
@@ -662,6 +676,7 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 		resolvers.add(new RequestAttributeMethodArgumentResolver());
 
 		// Type-based argument resolution
+		// 基于类型参数解析
 		resolvers.add(new ServletRequestMethodArgumentResolver());
 		resolvers.add(new ServletResponseMethodArgumentResolver());
 		resolvers.add(new HttpEntityMethodProcessor(getMessageConverters(), this.requestResponseBodyAdvice));
@@ -676,6 +691,7 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 		}
 
 		// Custom arguments
+		// 自定义参数
 		if (getCustomArgumentResolvers() != null) {
 			resolvers.addAll(getCustomArgumentResolvers());
 		}
@@ -723,6 +739,7 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 	}
 
 	/**
+	 * <p>返回要使用的返回值处理程序列表，包括通过setReturnValueHandlers提供的内置和自定义处理程序。</p>
 	 * Return the list of return value handlers to use including built-in and
 	 * custom handlers provided via {@link #setReturnValueHandlers}.
 	 */

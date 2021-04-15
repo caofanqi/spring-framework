@@ -33,12 +33,18 @@ import org.springframework.lang.Nullable;
 import org.springframework.util.ReflectionUtils;
 
 /**
+ * <p>Servlet 3.0 ServletContainerInitializer设计用于使用Spring的WebApplicationInitializer SPI来
+ * 支持基于代码的Servlet容器配置，这与传统的基于web.xml的方法相反(或可能与之结合)。</p>
+ *
  * Servlet 3.0 {@link ServletContainerInitializer} designed to support code-based
  * configuration of the servlet container using Spring's {@link WebApplicationInitializer}
  * SPI as opposed to (or possibly in combination with) the traditional
  * {@code web.xml}-based approach.
  *
  * <h2>Mechanism of Operation</h2>
+ * <p>假定spring-web模块JAR在类路径中存在，这个类将被加载和实例化，并由任何符合Servlet 3.0的容器在容器启动期间调用它的onStartup方法。
+ * 这是通过JAR服务API ServiceLoader.load(Class)方法检测spring-web模块的META-INF/services/javax.servlet.ServletContainerInitializer
+ * 服务提供者配置文件来实现的。详细信息请参阅JAR服务API文档以及Servlet 3.0最终草案规范的8.2.4节。</p>
  * This class will be loaded and instantiated and have its {@link #onStartup}
  * method invoked by any Servlet 3.0-compliant container during container startup assuming
  * that the {@code spring-web} module JAR is present on the classpath. This occurs through
@@ -171,6 +177,7 @@ public class SpringServletContainerInitializer implements ServletContainerInitia
 		servletContext.log(initializers.size() + " Spring WebApplicationInitializers detected on classpath");
 		AnnotationAwareOrderComparator.sort(initializers);
 		for (WebApplicationInitializer initializer : initializers) {
+			// 调用各WebApplicationInitializer的onStartup方法。
 			initializer.onStartup(servletContext);
 		}
 	}

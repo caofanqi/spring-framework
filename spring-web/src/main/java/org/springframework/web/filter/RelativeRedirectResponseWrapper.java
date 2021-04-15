@@ -24,6 +24,7 @@ import org.springframework.util.Assert;
 import org.springframework.web.util.WebUtils;
 
 /**
+ * <p>用于实现RelativeRedirectFilter的响应包装器也与ForwardedHeaderFilter共享。</p>
  * A response wrapper used for the implementation of
  * {@link RelativeRedirectFilter} also shared with {@link ForwardedHeaderFilter}.
  *

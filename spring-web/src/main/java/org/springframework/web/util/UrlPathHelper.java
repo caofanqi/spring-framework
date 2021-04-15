@@ -189,6 +189,7 @@ public class UrlPathHelper {
 
 
 	/**
+	 * <p>解析lookupPath并将其缓存到一个带有键PATH_ATTRIBUTE的请求属性中，以便后续通过getResolvedLookupPath(ServletRequest)进行访问。</p>
 	 * {@link #getLookupPathForRequest Resolve} the lookupPath and cache it in a
 	 * a request attribute with the key {@link #PATH_ATTRIBUTE} for subsequent
 	 * access via {@link #getResolvedLookupPath(ServletRequest)}.
@@ -197,6 +198,7 @@ public class UrlPathHelper {
 	 * @since 5.3
 	 */
 	public String resolveAndCacheLookupPath(HttpServletRequest request) {
+		// 根据请求解析lookupPath
 		String lookupPath = getLookupPathForRequest(request);
 		request.setAttribute(PATH_ATTRIBUTE, lookupPath);
 		return lookupPath;

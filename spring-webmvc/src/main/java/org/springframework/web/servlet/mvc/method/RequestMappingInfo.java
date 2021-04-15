@@ -47,6 +47,7 @@ import org.springframework.web.util.pattern.PathPattern;
 import org.springframework.web.util.pattern.PathPatternParser;
 
 /**
+ * <p>请求映射信息。复合材料适用于以下条件:</p>
  * Request mapping information. A composite for the the following conditions:
  * <ol>
  * <li>{@link PathPatternsRequestCondition} with parsed {@code PathPatterns} or
@@ -863,6 +864,7 @@ public final class RequestMappingInfo implements RequestCondition<RequestMapping
 
 
 	/**
+	 * <p>用于请求映射目的的配置选项的容器。创建RequestMappingInfo实例需要这样的配置，但是通常跨所有RequestMappingInfo实例使用。</p>
 	 * Container for configuration options used for request mapping purposes.
 	 * Such configuration is required to create RequestMappingInfo instances but
 	 * is typically used across all RequestMappingInfo instances.

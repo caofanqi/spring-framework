@@ -22,6 +22,8 @@ import java.util.Map;
 import org.springframework.lang.Nullable;
 
 /**
+ * <p>特定于java -5的接口，它定义了模型属性的持有者。主要用于向模型添加属性。允许以java.util.Map的形式访问整个模型。</p>
+ *
  * Java-5-specific interface that defines a holder for model attributes.
  * Primarily designed for adding attributes to the model.
  * Allows for accessing the overall model as a {@code java.util.Map}.

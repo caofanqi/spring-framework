@@ -462,11 +462,13 @@ public class UrlBasedViewResolver extends AbstractCachingViewResolver implements
 	protected View createView(String viewName, Locale locale) throws Exception {
 		// If this resolver is not supposed to handle the given view,
 		// return null to pass on to the next resolver in the chain.
+		// 当前解析器，不支持返回null，传递给下一个解析器
 		if (!canHandle(viewName, locale)) {
 			return null;
 		}
 
 		// Check for special "redirect:" prefix.
+		// 处理前缀为"redirect:"的情况
 		if (viewName.startsWith(REDIRECT_URL_PREFIX)) {
 			String redirectUrl = viewName.substring(REDIRECT_URL_PREFIX.length());
 			RedirectView view = new RedirectView(redirectUrl,
@@ -479,6 +481,7 @@ public class UrlBasedViewResolver extends AbstractCachingViewResolver implements
 		}
 
 		// Check for special "forward:" prefix.
+		// 处理前缀是"forward:"的情况
 		if (viewName.startsWith(FORWARD_URL_PREFIX)) {
 			String forwardUrl = viewName.substring(FORWARD_URL_PREFIX.length());
 			InternalResourceView view = new InternalResourceView(forwardUrl);
@@ -486,6 +489,7 @@ public class UrlBasedViewResolver extends AbstractCachingViewResolver implements
 		}
 
 		// Else fall back to superclass implementation: calling loadView.
+		// 否则退回到超类实现:调用loadView
 		return super.createView(viewName, locale);
 	}
 
@@ -550,6 +554,7 @@ public class UrlBasedViewResolver extends AbstractCachingViewResolver implements
 	}
 
 	/**
+	 * <p>创建指定视图类的新视图实例并配置它。不对预定义的视图实例执行任何查找。</p>
 	 * Creates a new View instance of the specified view class and configures it.
 	 * Does <i>not</i> perform any lookup for pre-defined View instances.
 	 * <p>Spring lifecycle methods as defined by the bean container do not have to
@@ -565,6 +570,7 @@ public class UrlBasedViewResolver extends AbstractCachingViewResolver implements
 	 */
 	protected AbstractUrlBasedView buildView(String viewName) throws Exception {
 		AbstractUrlBasedView view = instantiateView();
+		// 添加前缀后缀
 		view.setUrl(getPrefix() + viewName + getSuffix());
 		view.setAttributesMap(getAttributesMap());
 

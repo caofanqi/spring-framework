@@ -32,16 +32,21 @@ import org.springframework.web.cors.DefaultCorsProcessor;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 /**
+ * <p>过滤处理CORS pre-flight请求，并使用CorsProcessor拦截CORS简单和实际的请求，
+ * 并以及根据通过提供的CorsConfigurationSource匹配的策略更新响应，例如使用CORS响应头。</p>
  * {@link javax.servlet.Filter} to handle CORS pre-flight requests and intercept
  * CORS simple and actual requests with a {@link CorsProcessor}, and to update
  * the response, e.g. with CORS response headers, based on the policy matched
  * through the provided {@link CorsConfigurationSource}.
  *
+ * <p>这是在Spring MVC Java配置和Spring MVC XML名称空间中配置CORS的另一种选择。
+ * 对于仅依赖spring-web(而不是spring-webmvc)的应用程序，或者对于需要在Filter级别执行CORS检查的安全约束，它很有用。</p>
  * <p>This is an alternative to configuring CORS in the Spring MVC Java config
  * and the Spring MVC XML namespace. It is useful for applications depending
  * only on spring-web (not on spring-webmvc) or for security constraints that
  * require CORS checks to be performed at {@link javax.servlet.Filter} level.
  *
+ * <p>该过滤器可以与DelegatingFilterProxy一起使用，以帮助进行初始化。</p>
  * <p>This filter could be used in conjunction with {@link DelegatingFilterProxy}
  * in order to help with its initialization.
  *
@@ -58,6 +63,7 @@ public class CorsFilter extends OncePerRequestFilter {
 
 
 	/**
+	 * <p>构造函数接受一个CorsConfigurationSource，过滤器使用它来查找用于每个传入请求的CorsConfiguration。</p>
 	 * Constructor accepting a {@link CorsConfigurationSource} used by the filter
 	 * to find the {@link CorsConfiguration} to use for each incoming request.
 	 * @see UrlBasedCorsConfigurationSource
@@ -69,6 +75,8 @@ public class CorsFilter extends OncePerRequestFilter {
 
 
 	/**
+	 * <p>配置一个自定义CorsProcessor，用于为请求应用匹配的CorsConfiguration。</p>
+	 * <p>默认情况下使用DefaultCorsProcessor。</p>
 	 * Configure a custom {@link CorsProcessor} to use to apply the matched
 	 * {@link CorsConfiguration} for a request.
 	 * <p>By default {@link DefaultCorsProcessor} is used.

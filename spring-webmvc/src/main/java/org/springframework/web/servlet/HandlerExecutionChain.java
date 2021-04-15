@@ -31,6 +31,7 @@ import org.springframework.lang.Nullable;
 import org.springframework.util.CollectionUtils;
 
 /**
+ * <p>处理程序执行链，由handler对象和任何handler拦截器组成。由HandlerMapping的HandlerMapping.getHandler方法返回。</p>
  * Handler execution chain, consisting of handler object and any handler interceptors.
  * Returned by HandlerMapping's {@link HandlerMapping#getHandler} method.
  *
@@ -137,6 +138,7 @@ public class HandlerExecutionChain {
 
 
 	/**
+	 * <p>应用注册的拦截器的预处理方法。</p>
 	 * Apply preHandle methods of registered interceptors.
 	 * @return {@code true} if the execution chain should proceed with the
 	 * next interceptor or the handler itself. Else, DispatcherServlet assumes
@@ -167,6 +169,7 @@ public class HandlerExecutionChain {
 	}
 
 	/**
+	 * <p>在映射的HandlerInterceptors上触发完成后回调。将在完成后调用所有的拦截器，这些拦截器的前句柄调用已经成功完成并返回true</p>
 	 * Trigger afterCompletion callbacks on the mapped HandlerInterceptors.
 	 * Will just invoke afterCompletion for all interceptors whose preHandle invocation
 	 * has successfully completed and returned true.

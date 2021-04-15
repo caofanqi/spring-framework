@@ -44,6 +44,10 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
+ * <p>封装关于由方法和bean组成的处理程序方法的信息。提供对方法参数、方法返回值、方法注释等的方便访问。</p>
+ * <p>类可以用一个bean实例或一个bean名称创建(例如lazy-init bean, prototype bean)。
+ * 使用createWithResolvedBean()获得一个HandlerMethod实例，其中的bean实例是通过关联的BeanFactory解析的。</p>
+ *
  * Encapsulates information about a handler method consisting of a
  * {@linkplain #getMethod() method} and a {@linkplain #getBean() bean}.
  * Provides convenient access to method parameters, the method return value,

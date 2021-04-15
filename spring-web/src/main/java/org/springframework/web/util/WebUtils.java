@@ -468,6 +468,7 @@ public abstract class WebUtils {
 	}
 
 	/**
+	 * <p>返回指定类型的适当响应对象(如果可用)，并根据需要展开给定响应。</p>
 	 * Return an appropriate response object of the specified type, if available,
 	 * unwrapping the given response as far as necessary.
 	 * @param response the servlet response to introspect

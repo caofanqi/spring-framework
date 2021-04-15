@@ -39,6 +39,8 @@ public abstract class AbstractRequestAttributes implements RequestAttributes {
 
 
 	/**
+	 * <p>发出请求已完成的信号。</p>
+	 * <p>执行所有请求销毁回调，并更新在请求处理期间访问的会话属性。</p>
 	 * Signal that the request has been completed.
 	 * <p>Executes all request destruction callbacks and updates the
 	 * session attributes that have been accessed during request processing.

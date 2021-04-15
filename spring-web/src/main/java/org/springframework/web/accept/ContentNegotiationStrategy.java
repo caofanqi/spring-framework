@@ -24,6 +24,7 @@ import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.context.request.NativeWebRequest;
 
 /**
+ * <p>为请求解析所请求的媒体类型的策略。</p>
  * A strategy for resolving the requested media types for a request.
  *
  * @author Rossen Stoyanchev
@@ -41,6 +42,7 @@ public interface ContentNegotiationStrategy {
 
 
 	/**
+	 * <p>将给定的请求解析为媒体类型列表。返回的列表首先按特性排序，其次按质量参数排序。</p>
 	 * Resolve the given request to a list of media types. The returned list is
 	 * ordered by specificity first and by quality parameter second.
 	 * @param webRequest the current request
