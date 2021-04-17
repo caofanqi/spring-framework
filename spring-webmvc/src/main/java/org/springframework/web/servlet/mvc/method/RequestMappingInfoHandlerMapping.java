@@ -146,6 +146,7 @@ public abstract class RequestMappingInfoHandlerMapping extends AbstractHandlerMe
 		}
 
 		if (!info.getProducesCondition().getProducibleMediaTypes().isEmpty()) {
+			// 将@RequestMapping中的produces写入到request中
 			Set<MediaType> mediaTypes = info.getProducesCondition().getProducibleMediaTypes();
 			request.setAttribute(PRODUCIBLE_MEDIA_TYPES_ATTRIBUTE, mediaTypes);
 		}

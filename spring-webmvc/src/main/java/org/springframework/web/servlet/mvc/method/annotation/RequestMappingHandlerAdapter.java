@@ -859,6 +859,7 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 	}
 
 	/**
+	 * <p>如果需要视图解析，则调用准备ModelAndView的RequestMapping处理程序方法。</p>
 	 * Invoke the {@link RequestMapping} handler method preparing a {@link ModelAndView}
 	 * if view resolution is required.
 	 * @since 4.2
@@ -868,11 +869,13 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 	protected ModelAndView invokeHandlerMethod(HttpServletRequest request,
 			HttpServletResponse response, HandlerMethod handlerMethod) throws Exception {
 
+		// 将HttpServletRequest、HttpServletResponse包装成为ServletWebRequest
 		ServletWebRequest webRequest = new ServletWebRequest(request, response);
 		try {
 			WebDataBinderFactory binderFactory = getDataBinderFactory(handlerMethod);
 			ModelFactory modelFactory = getModelFactory(handlerMethod, binderFactory);
 
+			// 使用handlerMethod创建一个ServletInvocableHandlerMethod，并设置相关属性配置
 			ServletInvocableHandlerMethod invocableMethod = createInvocableHandlerMethod(handlerMethod);
 			if (this.argumentResolvers != null) {
 				invocableMethod.setHandlerMethodArgumentResolvers(this.argumentResolvers);
@@ -908,6 +911,7 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 				invocableMethod = invocableMethod.wrapConcurrentResult(result);
 			}
 
+			// 调用handler
 			invocableMethod.invokeAndHandle(webRequest, mavContainer);
 			if (asyncManager.isConcurrentHandlingStarted()) {
 				return null;
@@ -916,11 +920,13 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 			return getModelAndView(mavContainer, modelFactory, webRequest);
 		}
 		finally {
+			// 请求已完成
 			webRequest.requestCompleted();
 		}
 	}
 
 	/**
+	 * <p>从给定的HandlerMethod定义创建一个ServletInvocableHandlerMethod。</p>
 	 * Create a {@link ServletInvocableHandlerMethod} from the given {@link HandlerMethod} definition.
 	 * @param handlerMethod the {@link HandlerMethod} definition
 	 * @return the corresponding {@link ServletInvocableHandlerMethod} (or custom subclass thereof)

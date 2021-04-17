@@ -112,6 +112,11 @@ public class InvocableHandlerMethod extends HandlerMethod {
 
 
 	/**
+	 * <p>在给定请求的上下文中解析其参数值后调用该方法。</p>
+	 * <p>参数值通常通过HandlerMethodArgumentResolvers进行解析。
+	 * 然而，providedArgs形参可以提供直接使用的实参值，即不需要解析实参。
+	 * 所提供的参数值示例包括WebDataBinder、SessionStatus或抛出的异常实例。提供的参数值在参数解析器之前进行检查。</p>
+	 * <p>委托给getMethodArgumentValues，并使用已解析的参数调用doInvoke。</p>
 	 * Invoke the method after resolving its argument values in the context of the given request.
 	 * <p>Argument values are commonly resolved through
 	 * {@link HandlerMethodArgumentResolver HandlerMethodArgumentResolvers}.
@@ -134,10 +139,12 @@ public class InvocableHandlerMethod extends HandlerMethod {
 	public Object invokeForRequest(NativeWebRequest request, @Nullable ModelAndViewContainer mavContainer,
 			Object... providedArgs) throws Exception {
 
+		// 解析方法参数
 		Object[] args = getMethodArgumentValues(request, mavContainer, providedArgs);
 		if (logger.isTraceEnabled()) {
 			logger.trace("Arguments: " + Arrays.toString(args));
 		}
+		// 使用给定参数调用方法
 		return doInvoke(args);
 	}
 
@@ -150,6 +157,7 @@ public class InvocableHandlerMethod extends HandlerMethod {
 	protected Object[] getMethodArgumentValues(NativeWebRequest request, @Nullable ModelAndViewContainer mavContainer,
 			Object... providedArgs) throws Exception {
 
+		// 获取方法上的参数列表
 		MethodParameter[] parameters = getMethodParameters();
 		if (ObjectUtils.isEmpty(parameters)) {
 			return EMPTY_ARGS;
@@ -167,6 +175,7 @@ public class InvocableHandlerMethod extends HandlerMethod {
 				throw new IllegalStateException(formatArgumentError(parameter, "No suitable resolver"));
 			}
 			try {
+				// 使用参数解析器，进行解析参数值
 				args[i] = this.resolvers.resolveArgument(parameter, mavContainer, request, this.dataBinderFactory);
 			}
 			catch (Exception ex) {
@@ -194,6 +203,7 @@ public class InvocableHandlerMethod extends HandlerMethod {
 			if (KotlinDetector.isSuspendingFunction(method)) {
 				return CoroutinesUtils.invokeSuspendingFunction(method, getBean(), args);
 			}
+			// 反射调用
 			return method.invoke(getBean(), args);
 		}
 		catch (IllegalArgumentException ex) {

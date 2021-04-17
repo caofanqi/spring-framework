@@ -77,6 +77,7 @@ public abstract class AbstractHandlerMethodAdapter extends WebContentGenerator i
 	protected abstract boolean supportsInternal(HandlerMethod handlerMethod);
 
 	/**
+	 * <p>这个实现期望处理程序是一个HandlerMethod。</p>
 	 * This implementation expects the handler to be an {@link HandlerMethod}.
 	 */
 	@Override
@@ -88,6 +89,7 @@ public abstract class AbstractHandlerMethodAdapter extends WebContentGenerator i
 	}
 
 	/**
+	 * <p>使用给定的处理程序方法来处理请求。</p>
 	 * Use the given handler method to handle the request.
 	 * @param request current HTTP request
 	 * @param response current HTTP response

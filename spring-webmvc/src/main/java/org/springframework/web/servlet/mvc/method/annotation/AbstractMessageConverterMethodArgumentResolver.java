@@ -112,6 +112,7 @@ public abstract class AbstractMessageConverterMethodArgumentResolver implements 
 	}
 
 	/**
+	 * <p>通过从给定的请求中读取，创建预期参数类型的方法参数值。</p>
 	 * Create the method argument value of the expected parameter type by
 	 * reading from the given request.
 	 * @param <T> the expected type of the argument value to be created
@@ -131,6 +132,7 @@ public abstract class AbstractMessageConverterMethodArgumentResolver implements 
 	}
 
 	/**
+	 * <p>通过从给定的HttpInputMessage中读取，创建预期参数类型的方法参数值。</p>
 	 * Create the method argument value of the expected parameter type by reading
 	 * from the given HttpInputMessage.
 	 * @param <T> the expected type of the argument value to be created
@@ -147,6 +149,7 @@ public abstract class AbstractMessageConverterMethodArgumentResolver implements 
 	protected <T> Object readWithMessageConverters(HttpInputMessage inputMessage, MethodParameter parameter,
 			Type targetType) throws IOException, HttpMediaTypeNotSupportedException, HttpMessageNotReadableException {
 
+		// 获取请求头中的Content-Type
 		MediaType contentType;
 		boolean noContentType = false;
 		try {
@@ -160,7 +163,9 @@ public abstract class AbstractMessageConverterMethodArgumentResolver implements 
 			contentType = MediaType.APPLICATION_OCTET_STREAM;
 		}
 
+		// 获取参数方法所在类的class对象
 		Class<?> contextClass = parameter.getContainingClass();
+		// 获取参数的class对象
 		Class<T> targetClass = (targetType instanceof Class ? (Class<T>) targetType : null);
 		if (targetClass == null) {
 			ResolvableType resolvableType = ResolvableType.forMethodParameter(parameter);
@@ -178,11 +183,13 @@ public abstract class AbstractMessageConverterMethodArgumentResolver implements 
 				Class<HttpMessageConverter<?>> converterType = (Class<HttpMessageConverter<?>>) converter.getClass();
 				GenericHttpMessageConverter<?> genericConverter =
 						(converter instanceof GenericHttpMessageConverter ? (GenericHttpMessageConverter<?>) converter : null);
+				// 查找可以解析该类型的MessageConverter
 				if (genericConverter != null ? genericConverter.canRead(targetType, contextClass, contentType) :
 						(targetClass != null && converter.canRead(targetClass, contentType))) {
 					if (message.hasBody()) {
 						HttpInputMessage msgToUse =
 								getAdvice().beforeBodyRead(message, parameter, targetType, converterType);
+						// 使用符合的MessageConverter进行参数读取
 						body = (genericConverter != null ? genericConverter.read(targetType, contextClass, msgToUse) :
 								((HttpMessageConverter<T>) converter).read(targetClass, msgToUse));
 						body = getAdvice().afterBodyRead(body, msgToUse, parameter, targetType, converterType);
